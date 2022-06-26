@@ -104,12 +104,12 @@ const Navbar = () => {
         </div>
       </nav>
       {/* <nav className="bg-dark  border-gray-200 px-2 sm:px-4 py-4 dark:bg-gray-800"></nav> */}
-      <nav className=" border-gray-200 px-12  py-5 dark:bg-gray-400" >
+      <nav className=" bg-gray-800 border-gray-200 px-12  py-5 dark:bg-gray-400 "    >
       <div className="container flex flex-wrap justify-between items-center mx-auto flex-col sm:flex sm:flex-row sm:justify-between ">
       <Link href={"/"}>
             <a className="flex items-center">
               {/* <img src="/docs/images/logo.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo"> */}
-              <span className="self-center mx-8 text-xl font-semibold whitespace-nowrap my-1.5 dark:text-white">
+              <span className="self-center mx-8 text-xl text-white font-semibold whitespace-nowrap my-1.5 dark:text-white">
                 Dashboard
               </span>
             </a>

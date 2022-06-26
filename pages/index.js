@@ -14,7 +14,7 @@ export default function Home() {
             />
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-              <p className="text-gray-700 text-base">
+              <p className="text-gray-700 text-base  text-justify">
                 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis facilis ab fugit, modi quo ea laboriosam dolorem, provident repellendus harum, perspiciatis eius iusto. Sunt quibusdam odit quas autem natus, officia, commodi veritatis sapiente facilis, rerum voluptatibus ducimus in sint officiis. Magnam magni architecto dolorem est aliquid, cum facilis recusandae id ipsam numquam maiores, necessitatibus debitis! Quis repudiandae mollitia modi ratione temporibus ad porro voluptate, omnis optio, facilis cum cumque impedit ipsum? Esse magni hic possimus provident eaque vero sint, maiores laborum earum tempora rerum aliquid iure labore facere doloribus? Sit magni itaque cupiditate voluptate optio accusantium explicabo ab nesciunt harum.
               </p>
             </div>
@@ -38,7 +38,7 @@ export default function Home() {
             />
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-              <p className="text-gray-700 text-base">
+              <p className="text-gray-700 text-base text-justify">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                 Voluptatibus quia, nulla! Maiores et perferendis eaque,
                 exercitationem praesentium nihil.
@@ -64,7 +64,7 @@ export default function Home() {
             />
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-              <p className="text-gray-700 text-base">
+              <p className="text-gray-700 text-base text-justify">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                 Voluptatibus quia, nulla! Maiores et perferendis eaque,
                 exercitationem praesentium nihil.
@@ -90,7 +90,7 @@ export default function Home() {
             />
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-              <p className="text-gray-700 text-base">
+              <p className="text-gray-700 text-base text-justify">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                 Voluptatibus quia, nulla! Maiores et perferendis eaque,
                 exercitationem praesentium nihil.
@@ -116,7 +116,7 @@ export default function Home() {
             />
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-              <p className="text-gray-700 text-base">
+              <p className="text-gray-700 text-base text-justify">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                 Voluptatibus quia, nulla! Maiores et perferendis eaque,
                 exercitationem praesentium nihil.

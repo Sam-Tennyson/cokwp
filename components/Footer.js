@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <>
       
-<footer className="p-4  bottom-0 inset-x-0 shadow flex items-center flex-col justify-between md:flex md:items-center md:justify-between md:p-6 md:flex-row dark:bg-gray-800 sm:flex sm:item-center sm:justify-between">
+<footer className="bg-gray-200  p-4  bottom-0 inset-x-0 shadow flex items-center flex-col justify-between md:flex md:items-center md:justify-between md:p-6 md:flex-row dark:bg-gray-800 sm:flex sm:item-center sm:justify-between">
     <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2022 &nbsp;
     <Link href={"/"} ><a className="hover:underline">COKWP</a></Link>. All Rights Reserved.
     </span>
