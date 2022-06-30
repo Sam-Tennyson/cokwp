@@ -3,12 +3,13 @@ import Link from "next/link";
 
 const Navbar = () => {
   const [flag, setFlag] = useState(false);
+  const [showHead, setShowHead] = useState("")
   return (
     <>
-      <nav className="bg-dark  border-gray-200 px-6 py-6 dark:bg-gray-800">
-        <div className="container flex flex-wrap justify-between items-center mx-auto">
-          <Link href={"/"}>
-            <a className="flex items-center">
+      <nav className="bg-dark  border-gray-200 px-6 py-6 dark:bg-gray-800 ">
+        <div className="container flex flex-wrap justify-between items-center mx-auto ">
+          <Link href={"/"} >
+            <a className="flex items-center lg:mx-20" onClick={()=>setShowHead("Dashboard")}>
               {/* <img src="/docs/images/logo.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo"> */}
               <span className="self-center mx-6  text-xl font-semibold whitespace-nowrap dark:text-white">
                 COKWP
@@ -58,32 +59,35 @@ const Navbar = () => {
             id="mobile-menu"
           >
             <ul className="flex items-center px-12 flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
-              <Link href={"/"}>
+              <Link href={"/"} >
                 <li>
                   <a
                     href="#"
                     className="block px-5 py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                     aria-current="page"
+                    onClick={()=>setShowHead("Dashboard")}
                   >
                     Home
                   </a>
                 </li>
               </Link>
-              <Link href={"/blogs"}>
+              <Link href={"/Disquss"}>
                 <li>
                   <a
                     href="#"
                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                    onClick={()=>setShowHead("Blogs")}
                   >
                     Blogs
                   </a>
                 </li>
               </Link>
-              <Link href={"/about"}>
+              <Link href={"/about"} >
                 <li>
                   <a
                     href="#"
                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                    onClick={()=>setShowHead("About Us")}
                   >
                     About
                   </a>
@@ -94,6 +98,7 @@ const Navbar = () => {
                   <a
                     href="#"
                     className="block py-2 pr-4 pl-3 text-gray-700 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                     onClick={()=>setShowHead("Contact Us")}
                   >
                     Contact
                   </a>
@@ -107,10 +112,10 @@ const Navbar = () => {
       <nav className=" bg-gray-800 border-gray-200 px-12  py-5 dark:bg-gray-400 "    >
       <div className="container flex flex-wrap justify-between items-center mx-auto flex-col sm:flex sm:flex-row sm:justify-between ">
       <Link href={"/"}>
-            <a className="flex items-center">
+            <a className="flex items-center lg:mx-20">
               {/* <img src="/docs/images/logo.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo"> */}
               <span className="self-center mx-8 text-xl text-white font-semibold whitespace-nowrap my-1.5 dark:text-white">
-                Dashboard
+                {showHead}
               </span>
             </a>
           </Link>
