@@ -58,7 +58,7 @@ export default function Home(props) {
   // },[props.playlist4])
 
   // console.log(props.playlist1);
-  console.log("playlist1",playlist1)
+ 
 
   return (
     <>
@@ -84,6 +84,7 @@ export default function Home(props) {
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId?.videoId}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         <img
                           width={medium?.width}
@@ -171,6 +172,7 @@ export default function Home(props) {
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId?.videoId}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         <img
                           width={medium?.width}
@@ -258,6 +260,7 @@ export default function Home(props) {
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId.videoId}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         <img
                           width={medium.width}
@@ -340,6 +343,7 @@ export default function Home(props) {
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId.videoId}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         <img
                           width={medium.width}
@@ -421,6 +425,7 @@ export default function Home(props) {
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId.videoId}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         <img
                           width={medium.width}
