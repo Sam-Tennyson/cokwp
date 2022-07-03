@@ -8,10 +8,10 @@ const YOUTUBE_PLAYLIST_ITEMS_API =
   "https://www.googleapis.com/youtube/v3/playlistItems";
 
 export default function Home(props) {
-  const [playlist1, setPlaylist1] = useState(props.playlist1);
-  const [playlist2, setPlaylist2] = useState(props.playlist2);
-  const [playlist3, setPlaylist3] = useState(props.playlist3);
-  const [playlist4, setPlaylist4] = useState(props.playlist4);
+  const [playlist1, setPlaylist1] = useState(props?.playlist1);
+  const [playlist2, setPlaylist2] = useState(props?.playlist2);
+  const [playlist3, setPlaylist3] = useState(props?.playlist3);
+  const [playlist4, setPlaylist4] = useState(props?.playlist4);
   console.log(props.playlist1);
 
   return (
