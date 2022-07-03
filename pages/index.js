@@ -12,6 +12,23 @@ export default function Home(props) {
   const [playlist2, setPlaylist2] = useState(props.playlist2);
   const [playlist3, setPlaylist3] = useState(props.playlist3);
   const [playlist4, setPlaylist4] = useState(props.playlist4);
+
+  useEffect(()=> {
+    setPlaylist1(props.playlist1)
+  },[props.playlist1])
+
+  useEffect(()=> {
+    setPlaylist2(props.playlist2)
+  },[props.playlist2])
+
+  useEffect(()=> {
+    setPlaylist3(props.playlist3)
+  },[props.playlist3])
+
+  useEffect(()=> {
+    setPlaylist4(props.playlist4)
+  },[props.playlist4])
+
   console.log(props.playlist1);
 
   return (
@@ -21,7 +38,7 @@ export default function Home(props) {
           <div className="container px-5 py-24 mx-auto">
             <div className="flex flex-wrap -m-4">
               {/* 18 77 */}
-              {playlist1?.items.map((item) => {
+              { playlist1?.items.map((item) => {
                 console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -187,7 +204,7 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              {playlist3?.items.map((item) => {
+              { playlist3?.items.map((item) => {
                 console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -267,7 +284,7 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              {playlist4?.items.map((item) => {
+              { playlist4?.items.map((item) => {
                 console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
