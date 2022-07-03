@@ -16,6 +16,8 @@ export default function Home(props) {
   const [playlist2, setPlaylist2] = useState("");
   const [playlist3, setPlaylist3] = useState("");
   const [playlist4, setPlaylist4] = useState("");
+  const [playlist5, setPlaylist5] = useState("");
+
   useEffect(()=> {
     fetch(
       `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhEr5Q7AU27PShvGC3wZ_9P1&maxResult=50&key=AIzaSyCYj_AmGzhQrwD2FfmeyyUrBrWnqn4uSvY`)
@@ -33,6 +35,10 @@ export default function Home(props) {
       `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhHoXnJAB4NkJyzl_VORwjfb&maxResult=50&key=AIzaSyCYj_AmGzhQrwD2FfmeyyUrBrWnqn4uSvY`)
       .then((res)=>res.json())
       .then((data)=> setPlaylist4(data))
+    fetch(
+      `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhGpdZZXSBCHGnfs2S-9BZYl&maxResult=50&key=AIzaSyCYj_AmGzhQrwD2FfmeyyUrBrWnqn4uSvY`)
+      .then((res)=>res.json())
+      .then((data)=> setPlaylist5(data))
   },[])
 
   // useEffect(()=> {
@@ -61,6 +67,93 @@ export default function Home(props) {
           <div className="container px-5 py-24 mx-auto">
             <div className="flex flex-wrap -m-4">
               {/* 18 77 */}
+              {  playlist5  && playlist5?.items?.map((item) => {
+                // console.log("item", item);
+                const { id, snippet = {} } = item;
+                const {
+                  title,
+                  thumbnails = {},
+                  resourceId,
+                  description,
+                } = snippet;
+                const { medium = {} } = thumbnails;
+
+                return (
+                  <div key={id} className="p-4 md:4/5 lg:w-1/3">
+                    <div className="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative">
+                      <a
+                        href={`https://www.youtube.com/watch?v=${resourceId?.videoId}`}
+                        target="_blank"
+                      >
+                        <img
+                          width={medium?.width}
+                          height={medium?.height}
+                          src={medium?.url}
+                          alt="error"
+                          className="w-full"
+                        />
+                        {/* <Image
+                          width={medium.width}
+                          height={medium.height}
+                          src={medium.url}
+                          alt="error"
+                          layout="fill" /> */}
+                      </a>
+
+                      <h1 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-3">
+                        {title}
+                      </h1>
+                      <p className="leading-relaxed mb-3">{description}</p>
+                      <a className="text-indigo-500 inline-flex items-center">
+                        Learn More
+                        <svg
+                          className="w-4 h-4 ml-2"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M5 12h14"></path>
+                          <path d="M12 5l7 7-7 7"></path>
+                        </svg>
+                      </a>
+                      <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 left-0 w-full py-4">
+                        <span className="text-gray-400 mr-3 inline-flex items-center leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                          1.2K
+                        </span>
+                        <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                          </svg>
+                          6
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
               {  playlist1  && playlist1?.items?.map((item) => {
                 // console.log("item", item);
                 const { id, snippet = {} } = item;
@@ -77,6 +170,7 @@ export default function Home(props) {
                     <div className="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative">
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId?.videoId}`}
+                        target="_blank"
                       >
                         <img
                           width={medium?.width}
@@ -163,6 +257,7 @@ export default function Home(props) {
                     <div className="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative">
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId.videoId}`}
+                        target="_blank"
                       >
                         <img
                           width={medium.width}
@@ -244,6 +339,7 @@ export default function Home(props) {
                     <div className="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative">
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId.videoId}`}
+                        target="_blank"
                       >
                         <img
                           width={medium.width}
@@ -324,6 +420,7 @@ export default function Home(props) {
                     <div className="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative">
                       <a
                         href={`https://www.youtube.com/watch?v=${resourceId.videoId}`}
+                        target="_blank"
                       >
                         <img
                           width={medium.width}
