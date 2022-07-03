@@ -38,7 +38,7 @@ export default function Home(props) {
           <div className="container px-5 py-24 mx-auto">
             <div className="flex flex-wrap -m-4">
               {/* 18 77 */}
-              { playlist1?.items.map((item) => {
+              { playlist1 && playlist1?.items.map((item) => {
                 console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -124,7 +124,7 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              {playlist2?.items.map((item) => {
+              {playlist2 && playlist2?.items.map((item) => {
                 console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -204,7 +204,7 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              { playlist3?.items.map((item) => {
+              { playlist3 && playlist3?.items.map((item) => {
                 console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -284,7 +284,7 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              { playlist4?.items.map((item) => {
+              { playlist4 && playlist4?.items.map((item) => {
                 console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
