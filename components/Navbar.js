@@ -6,11 +6,39 @@ const Navbar = () => {
   const [showHead, setShowHead] = useState("")
   return (
     <>
-      <nav className="bg-dark  border-gray-200 px-6 py-6 dark:bg-gray-800 ">
+      <header className="text-gray-600 body-font">
+  <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+    <a className="flex title-font font-medium items-center lg:mx-20  text-gray-900 mb-4 md:mb-0">
+      {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full" viewBox="0 0 24 24">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+      </svg> */}
+      <img src="/download.png" width="30px" alt="" />
+      <span className="ml-3 text-xl mx-10">COKWP</span>
+    </a>
+    <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
+    <Link href={"/"} >
+      <a className="mr-5 hover:text-gray-900" onClick={()=>setShowHead("Dashboard")}>Home</a>
+      </Link>
+      <Link href={"/blogs"} >
+      <a className="mr-5 hover:text-gray-900" onClick={()=>setShowHead("Blogs")}>Blogs</a></Link>
+      <Link href={"/about"} >
+      <a className="mr-5 hover:text-gray-900" onClick={()=>setShowHead("About Us")}>About Us</a>
+      </Link>
+
+ 
+    </nav>
+    {/* <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Button
+      <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
+        <path d="M5 12h14M12 5l7 7-7 7"></path>
+      </svg>
+    </button> */}
+  </div>
+</header>
+      {/* <nav className="bg-dark  border-gray-200 px-6 py-6 dark:bg-gray-800 ">
         <div className="container flex flex-wrap justify-between items-center mx-auto ">
           <Link href={"/"} >
             <a className="flex items-center lg:mx-20" onClick={()=>setShowHead("Dashboard")}>
-              {/* <img src="/docs/images/logo.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo"> */}
+              
               <span className="self-center mx-6  text-xl font-semibold whitespace-nowrap dark:text-white">
                 COKWP
               </span>
@@ -24,7 +52,7 @@ const Navbar = () => {
             aria-expanded="false"
             onClick={() => setFlag(!flag)}
           >
-            {/* <span className="sr-only">Open main menu</span> */}
+            
             <svg
               className="w-6 h-6"
               fill="currentColor"
@@ -71,7 +99,7 @@ const Navbar = () => {
                   </a>
                 </li>
               </Link>
-              <Link href={"/Disquss"}>
+              <Link href={"/blogs"}>
                 <li>
                   <a
                     href="#"
@@ -107,15 +135,15 @@ const Navbar = () => {
             </ul>
           </div>
         </div>
-      </nav>
+      </nav> */}
       {/* <nav className="bg-dark  border-gray-200 px-2 sm:px-4 py-4 dark:bg-gray-800"></nav> */}
-      <nav className=" bg-gray-800 border-gray-200 px-12  py-5 dark:bg-gray-400 "    >
+      <nav className=" bg-cyan-600 border-gray-200 py-5  "    >
       <div className="container flex flex-wrap justify-between items-center mx-auto flex-col sm:flex sm:flex-row sm:justify-between ">
       <Link href={"/"}>
             <a className="flex items-center lg:mx-20">
-              {/* <img src="/docs/images/logo.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo"> */}
+              
               <span className="self-center mx-8 text-xl text-white font-semibold whitespace-nowrap my-1.5 dark:text-white">
-                {showHead}
+                {showHead ? showHead : "Dashboard"}
               </span>
             </a>
           </Link>
