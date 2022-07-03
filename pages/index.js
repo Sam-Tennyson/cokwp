@@ -29,7 +29,7 @@ export default function Home(props) {
     setPlaylist4(props.playlist4)
   },[props.playlist4])
 
-  console.log(props.playlist1);
+  // console.log(props.playlist1);
 
   return (
     <>
@@ -39,7 +39,7 @@ export default function Home(props) {
             <div className="flex flex-wrap -m-4">
               {/* 18 77 */}
               { playlist1 && playlist1?.items.map((item) => {
-                console.log("item", item);
+                // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
                   title,
@@ -125,7 +125,7 @@ export default function Home(props) {
                 );
               })}
               {playlist2 && playlist2?.items.map((item) => {
-                console.log("item", item);
+                // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
                   title,
@@ -205,7 +205,7 @@ export default function Home(props) {
                 );
               })}
               { playlist3 && playlist3?.items.map((item) => {
-                console.log("item", item);
+                // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
                   title,
@@ -285,7 +285,7 @@ export default function Home(props) {
                 );
               })}
               { playlist4 && playlist4?.items.map((item) => {
-                console.log("item", item);
+                // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
                   title,
@@ -394,10 +394,10 @@ export async function getServerSideProps() {
     `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhHoXnJAB4NkJyzl_VORwjfb&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
   );
   const playlist4 = await res4.json();
-  console.log(playlist1);
-  console.log(playlist2,"2");
-  console.log(playlist3, "3");
-  console.log(playlist4, "4");
+  // console.log(playlist1);
+  // console.log(playlist2,"2");
+  // console.log(playlist3, "3");
+  // console.log(playlist4, "4");
   return {
     props: {
       playlist1,
