@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import YouTube from "react-youtube";
 
@@ -8,28 +7,52 @@ const YOUTUBE_PLAYLIST_ITEMS_API =
   "https://www.googleapis.com/youtube/v3/playlistItems";
 
 export default function Home(props) {
-  const [playlist1, setPlaylist1] = useState(props.playlist1);
-  const [playlist2, setPlaylist2] = useState(props.playlist2);
-  const [playlist3, setPlaylist3] = useState(props.playlist3);
-  const [playlist4, setPlaylist4] = useState(props.playlist4);
-
+  // const [playlist1, setPlaylist1] = useState(props?.playlist1);
+  // const [playlist2, setPlaylist2] = useState(props?.playlist2);
+  // const [playlist3, setPlaylist3] = useState(props?.playlist3);
+  // const [playlist4, setPlaylist4] = useState(props?.playlist4);
+  
+  const [playlist1, setPlaylist1] = useState("");
+  const [playlist2, setPlaylist2] = useState("");
+  const [playlist3, setPlaylist3] = useState("");
+  const [playlist4, setPlaylist4] = useState("");
   useEffect(()=> {
-    setPlaylist1(props.playlist1)
-  },[props.playlist1])
+    fetch(
+      `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhEr5Q7AU27PShvGC3wZ_9P1&maxResult=50&key=AIzaSyCYj_AmGzhQrwD2FfmeyyUrBrWnqn4uSvY`)
+      .then((res)=>res.json())
+      .then((data)=> setPlaylist1(data))
+    fetch(
+      `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhE0r2XNYu0UUAIyh_1CihCC&maxResult=50&key=AIzaSyCYj_AmGzhQrwD2FfmeyyUrBrWnqn4uSvY`)
+      .then((res)=>res.json())
+      .then((data)=> setPlaylist2(data))
+    fetch(
+      `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhG3e1l5F2C6aOHj3OIkIvWl&maxResult=50&key=AIzaSyCYj_AmGzhQrwD2FfmeyyUrBrWnqn4uSvY`)
+      .then((res)=>res.json())
+      .then((data)=> setPlaylist3(data))
+    fetch(
+      `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhHoXnJAB4NkJyzl_VORwjfb&maxResult=50&key=AIzaSyCYj_AmGzhQrwD2FfmeyyUrBrWnqn4uSvY`)
+      .then((res)=>res.json())
+      .then((data)=> setPlaylist4(data))
+  },[])
 
-  useEffect(()=> {
-    setPlaylist2(props.playlist2)
-  },[props.playlist2])
+  // useEffect(()=> {
+  //   setPlaylist1(props?.playlist1)
+  // },[props.playlist1])
 
-  useEffect(()=> {
-    setPlaylist3(props.playlist3)
-  },[props.playlist3])
+  // useEffect(()=> {
+  //   setPlaylist2(props?.playlist2)
+  // },[props.playlist2])
 
-  useEffect(()=> {
-    setPlaylist4(props.playlist4)
-  },[props.playlist4])
+  // useEffect(()=> {
+  //   setPlaylist3(props?.playlist3)
+  // },[props.playlist3])
+
+  // useEffect(()=> {
+  //   setPlaylist4(props?.playlist4)
+  // },[props.playlist4])
 
   // console.log(props.playlist1);
+  console.log("playlist1",playlist1)
 
   return (
     <>
@@ -38,7 +61,7 @@ export default function Home(props) {
           <div className="container px-5 py-24 mx-auto">
             <div className="flex flex-wrap -m-4">
               {/* 18 77 */}
-              { playlist1 && playlist1?.items.map((item) => {
+              {  playlist1  && playlist1?.items?.map((item) => {
                 // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -53,12 +76,12 @@ export default function Home(props) {
                   <div key={id} className="p-4 md:4/5 lg:w-1/3">
                     <div className="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative">
                       <a
-                        href={`https://www.youtube.com/watch?v=${resourceId.videoId}`}
+                        href={`https://www.youtube.com/watch?v=${resourceId?.videoId}`}
                       >
                         <img
-                          width={medium.width}
-                          height={medium.height}
-                          src={medium.url}
+                          width={medium?.width}
+                          height={medium?.height}
+                          src={medium?.url}
                           alt="error"
                           className="w-full"
                         />
@@ -124,7 +147,7 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              {playlist2 && playlist2?.items.map((item) => {
+            {playlist2?.items?.map((item) => {
                 // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -204,7 +227,8 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              { playlist3 && playlist3?.items.map((item) => {
+              
+              {  playlist3?.items?.map((item) => {
                 // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -284,7 +308,7 @@ export default function Home(props) {
                   </div>
                 );
               })}
-              { playlist4 && playlist4?.items.map((item) => {
+              { playlist4?.items?.map((item) => {
                 // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -363,7 +387,7 @@ export default function Home(props) {
                     </div>
                   </div>
                 );
-              })}
+              })} 
               
               
               
@@ -377,33 +401,33 @@ export default function Home(props) {
   );
 }
 
-export async function getServerSideProps() {
-  const res1 = await fetch(
-    `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhEr5Q7AU27PShvGC3wZ_9P1&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
-  );
-  const playlist1 = await res1.json();
-  const res2 = await fetch(
-    `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhE0r2XNYu0UUAIyh_1CihCC&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
-  );
-  const playlist2 = await res2.json();
-  const res3 = await fetch(
-    `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhG3e1l5F2C6aOHj3OIkIvWl&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
-  );
-  const playlist3 = await res3.json();
-  const res4 = await fetch(
-    `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhHoXnJAB4NkJyzl_VORwjfb&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
-  );
-  const playlist4 = await res4.json();
-  // console.log(playlist1);
-  // console.log(playlist2,"2");
-  // console.log(playlist3, "3");
-  // console.log(playlist4, "4");
-  return {
-    props: {
-      playlist1,
-      playlist2,
-      playlist3,
-      playlist4,
-    },
-  };
-}
+// export async function getServerSideProps() {
+//   const res1 = await fetch(
+//     `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhEr5Q7AU27PShvGC3wZ_9P1&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
+//   );
+//   const playlist1 = await res1.json();
+//   const res2 = await fetch(
+//     `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhE0r2XNYu0UUAIyh_1CihCC&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
+//   );
+//   const playlist2 = await res2.json();
+//   const res3 = await fetch(
+//     `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhG3e1l5F2C6aOHj3OIkIvWl&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
+//   );
+//   const playlist3 = await res3.json();
+//   const res4 = await fetch(
+//     `${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&playlistId=PLQ5xEuNctHhHoXnJAB4NkJyzl_VORwjfb&maxResult=50&key=${process.env.YOUTUBE_API_KEY}`
+//   );
+//   const playlist4 = await res4.json();
+//   // console.log(playlist1);
+//   // console.log(playlist2,"2");
+//   // console.log(playlist3, "3");
+//   // console.log(playlist4, "4");
+//   return {
+//     props: {
+//       playlist1,
+//       playlist2,
+//       playlist3,
+//       playlist4,
+//     },
+//   };
+// }
