@@ -3,6 +3,10 @@ import React from 'react'
 const about = () => {
   return (
     <>
+    <div className="mx-3 sm:w-4/5  sm:m-auto  ">
+      <img src="/child.png" alt="error" />
+      </div>
+      <h2 className="text-3xl font-medium title-font text-gray-900 my-10 text-center">About Us</h2>
     <div className='my-12  border-gray-800 w-4/5  m-auto' >
        <p className="text-justify">
     Hello guys! I am Tyson!

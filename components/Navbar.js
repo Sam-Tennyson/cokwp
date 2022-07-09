@@ -5,21 +5,21 @@ import CustomModal from "./CustomModal";
 const Navbar = () => {
 
   const [showHead, setShowHead] = useState("");
-  const [flag, setFlag] = useState(false);
+  // const [flag, setFlag] = useState(false);
 
 
-  const  closeModal = ()=> {
-    setFlag(false)
-  }
+  // const  closeModal = ()=> {
+  //   setFlag(false)
+  // }
 
-  const handleOpenModal = ()=> {
-    console.log("asdf")
-    setFlag(true)
-  }
+  // const handleOpenModal = ()=> {
+  //   console.log("asdf")
+  //   setFlag(true)
+  // }
 
   return (
     <>
-     <CustomModal openModal={flag}  onClickClose={closeModal} />
+     {/* <CustomModal openModal={flag}  onClickClose={closeModal} /> */}
       <header className="text-gray-500 sm:text-sm body-font m-auto border-b-0">
         <div className="container mx-auto mb-4  flex flex-wrap p-3  flex-col md:flex-row items-center">
           <a className="flex title-font font-medium items-center lg:mx-20  text-gray-900 mb-4 md:mb-0">
@@ -39,7 +39,7 @@ const Navbar = () => {
               </a>
             </Link>
             {/* <Link href={"/blogs"}> */}
-            <Link href={"/"}>
+            {/* <Link href={"/"}>
               <a
                 className="mr-5 hover:text-gray-900"
                 // onClick={() => setShowHead("Blogs")}
@@ -47,13 +47,21 @@ const Navbar = () => {
               >
                 Blogs
               </a>
-            </Link>
+            </Link> */}
             <Link href={"/about"}>
               <a
                 className="mr-5 hover:text-gray-900"
                 onClick={() => setShowHead("About Us")}
               >
                 About Us
+              </a>
+            </Link>
+            <Link href={"/contact"}>
+              <a
+                className="mr-5 hover:text-gray-900"
+                onClick={() => setShowHead("About Us")}
+              >
+                Contact Us
               </a>
             </Link>
             
@@ -82,9 +90,9 @@ const Navbar = () => {
           />
         </div>
       </nav> */}
-      <div className="mx-3 sm:w-4/5  sm:m-auto  ">
+      {/* <div className="mx-3 sm:w-4/5  sm:m-auto  ">
       <img src="/child.png" alt="error" />
-      </div>
+      </div> */}
         
     </>
   );
