@@ -8,7 +8,7 @@ import { GiHamburgerMenu } from 'react-icons/gi'
 
 const Navbar = () => {
   const [showHead, setShowHead] = useState("");
-  const [showOption, setShowOption] = useState(false)
+  const [showOption, setShowOption] = useState(true)
   // const [flag, setFlag] = useState(false);
 
   // const  closeModal = ()=> {
@@ -91,7 +91,7 @@ const Navbar = () => {
       
         </div>
       </header>
-      <nav className={` text-gray-500 bg-gray-100 p-3 ${showOption ?"hidden":"flex"} text-sm body-font m-auto border-b-0 ml-auto md:hidden flex-col flex-wrap items-center `}>
+      <nav className={` text-gray-500 bg-yellow-100 p-3 ${showOption ?"hidden":"flex"} text-sm body-font m-auto border-b-0 ml-auto md:hidden flex-col flex-wrap items-center `}>
         <div className="flex  flex-row mb-3 items-center">
               <BiHome />
             <Link href={"/"}>
@@ -145,7 +145,7 @@ const Navbar = () => {
             </button>
             </Link>
             <Link href={"/login"}>
-            <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2" onClick={()=>{
+            <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2" nClick={()=>{
               setShowOption(true)
             }}>
               Login
