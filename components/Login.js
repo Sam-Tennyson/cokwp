@@ -46,7 +46,7 @@ const Login = () => {
               Login
             </button>
             <p className="text-sm text-gray-500 mt-3">
-              Don't have an account 
+              Don &apos;t have an account 
             </p>
           </div>
         </div>
