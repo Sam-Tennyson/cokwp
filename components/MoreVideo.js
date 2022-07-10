@@ -1,12 +1,12 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import Link from "next/link"
+import YouTube from "react-youtube";
 import CustomModal from "../components/CustomModal";
 
 const YOUTUBE_PLAYLIST_ITEMS_API =
   "https://www.googleapis.com/youtube/v3/playlistItems";
 
-export default function Home(props) {
+export default function MoreVideo(props) {
   // const [playlist1, setPlaylist1] = useState(props?.playlist1);
   // const [playlist2, setPlaylist2] = useState(props?.playlist2);
   // const [playlist3, setPlaylist3] = useState(props?.playlist3);
@@ -65,7 +65,6 @@ export default function Home(props) {
   // console.log(props.playlist1);
   const [flag, setFlag] = useState(false);
 
-
   const  closeModal = ()=> {
     setFlag(false)
   }
@@ -74,50 +73,15 @@ export default function Home(props) {
     console.log("asdf")
     setFlag(true)
   }
+
+
+
   return (
     <>
       <div>
-      <CustomModal openModal={flag}  onClickClose={closeModal} />
-        <section className="text-gray-600 body-font">
-          <div className="container mx-auto flex px-5 md:py-24 md:flex-row flex-col items-center">
-            <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-              <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-              cLuStEr OF kNoWleDgE{" "}
-                <br className="hidden lg:inline-block" />
-                with Priya
-              </h1>
-              <p className="mb-8 leading-relaxed">
-                I made this website especially for knowledge purpose....not just
-                for you..but also for myself ...to make myself busy in{" "}
-                <br className="hidden lg:inline-block" />
-                Activities..that will not only help in build up my knowledge bt
-                by sharing it I can meet new peoples like all of you ..so that I
-                can..get a lot of views and ideas that will help me in.thinking
-                out of the boxl!.
-              </p>
-              <div className="flex justify-center">
-                <Link href={"/free-videos"}>
-                <button className="inline-flex text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">
-                  More Videos
-                </button>
-                </Link>
-                <button className="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg" onClick={handleOpenModal}>
-                  Blogs
-                </button>
-              </div>
-            </div>
-            <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-              <img
-                className="object-cover object-center rounded"
-                alt="hero"
-                src="/child.png"
-              />
-            </div>
-          </div>
-        </section>
         <section className="text-gray-600 body-font">
           <h2 className="text-3xl font-medium title-font text-gray-900 my-10 text-center">
-            Latest Videos
+            Recommended Videos
           </h2>
           <div className="container px-5 mx-auto">
             <div className="flex flex-wrap -m-4">
@@ -211,7 +175,7 @@ export default function Home(props) {
                     </div>
                   );
                 })}
-              {/* {playlist2?.items?.map((item) => {
+              {playlist2?.items?.map((item) => {
                 // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -248,7 +212,7 @@ export default function Home(props) {
                 );
               })}
 
-               {playlist3?.items?.map((item) => {
+              {playlist3?.items?.map((item) => {
                 // console.log("item", item);
                 const { id, snippet = {} } = item;
                 const {
@@ -319,7 +283,7 @@ export default function Home(props) {
                     </div>
                   </div>
                 );
-              })} */}
+              })}
             </div>
           </div>
         </section>
