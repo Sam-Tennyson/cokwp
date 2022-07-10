@@ -84,10 +84,10 @@ const contact = () => {
                     
                     <img src="/icons8Facebook.png" alt="error" />
                   </a>
-                  <a className="ml-4 text-gray-500" href="https://t.me/cLuStErOfKnOwLedgPS" target="_blank" >
+                  <a className="ml-4 text-gray-500" href="https://t.me/cLuStErOfKnOwLedgPS" target="_blank" rel="noopener noreferrer" >
                     <img src="/icons8Telegram.png" alt="error" />
                   </a>
-                  <a className="ml-4 text-gray-500 cursor-pointer" href="https://www.instagram.com/clusterofknowledge_priya/?igshid=YmMyMTA2M2Y=" target="_blank">
+                  <a className="ml-4 text-gray-500 cursor-pointer" href="https://www.instagram.com/clusterofknowledge_priya/?igshid=YmMyMTA2M2Y=" rel="noopener noreferrer" target="_blank">
                     <img src="/icons8Instagram.png" alt="error" />
                   </a>
                   {/* <a className="ml-4 text-gray-500">
