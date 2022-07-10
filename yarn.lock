@@ -244,7 +244,9 @@
 "@emotion/memoize@^0.7.4", "@emotion/memoize@^0.7.5":
   "version" "0.7.5"
 
-"@emotion/react@^11.0.0-rc.0", "@emotion/react@^11.4.1", "@emotion/react@^11.5.0":
+"@emotion/react@^11.0.0-rc.0", "@emotion/react@^11.4.1", "@emotion/react@^11.5.0", "@emotion/react@^11.9.3":
+  "integrity" "sha512-g9Q1GcTOlzOEjqwuLF/Zd9LC+4FljjPjDfxSM7KmEakm+hsHXk+bYZ2q+/hTJzr0OUNkujo72pXLQvXj6H+GJQ=="
+  "resolved" "https://registry.npmjs.org/@emotion/react/-/react-11.9.3.tgz"
   "version" "11.9.3"
   dependencies:
     "@babel/runtime" "^7.13.10"
@@ -267,7 +269,9 @@
 "@emotion/sheet@^1.1.1":
   "version" "1.1.1"
 
-"@emotion/styled@^11.3.0":
+"@emotion/styled@^11.3.0", "@emotion/styled@^11.9.3":
+  "integrity" "sha512-o3sBNwbtoVz9v7WB1/Y/AmXl69YHmei2mrVnK7JgyBJ//Rst5yqPZCecEJlMlJrFeWHp+ki/54uN265V2pEcXA=="
+  "resolved" "https://registry.npmjs.org/@emotion/styled/-/styled-11.9.3.tgz"
   "version" "11.9.3"
   dependencies:
     "@babel/runtime" "^7.13.10"
@@ -376,7 +380,7 @@
     "prop-types" "^15.8.1"
     "react-is" "^17.0.2"
 
-"@mui/material@^5.0.0":
+"@mui/material@^5.0.0", "@mui/material@^5.8.7":
   "integrity" "sha512-Oo62UhrgEi+BMLr3nUEASJgScE2/hhq14CbBUmrVV3GQlEGtqMZsy26Vb0AqEmphFeN3TXlsbM9aeW5yq8ZFlw=="
   "resolved" "https://registry.npmjs.org/@mui/material/-/material-5.8.7.tgz"
   "version" "5.8.7"
