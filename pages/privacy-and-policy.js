@@ -3,7 +3,7 @@ import React from "react";
 const Privacy = () => {
   return (
     <>
-      <h1 className="sm:text-2md md:text-2xl text-5sm lg:text-2xl  font-bold my-5">Privacy Policy htmlFor COKWP</h1>
+      <h1 className="sm:text-2md md:text-2xl text-5sm lg:text-2xl  font-bold my-5">Privacy Policy for COKWP</h1>
 
       <p className="text-justify">
         At COKWP, accessible from huntcode777.store, one of our main priorities
@@ -19,7 +19,7 @@ const Privacy = () => {
 
       <p className="text-justify">
         This Privacy Policy applies only to our online activities and is valid
-        htmlFor visitors to our website with regards to the information that they
+        for visitors to our website with regards to the information that they
         shared and/or collect in COKWP. This policy is not applicable to any
         information collected offline or via channels other than this website.
       </p>
@@ -45,7 +45,7 @@ const Privacy = () => {
         you may choose to provide.
       </p>
       <p className="text-justify">
-        When you register htmlFor an Account, we may ask htmlFor your contact
+        When you register for an Account, we may ask for your contact
         information, including items such as name, company name, address, email
         address, and telephone number.
       </p>
@@ -61,8 +61,8 @@ const Privacy = () => {
         <li>Develop new products, services, features, and functionality</li>
         <li>
           Communicate with you, either directly or through one of our partners,
-          including htmlFor customer service, to provide you with updates and other
-          information relating to the website, and htmlFor marketing and promotional
+          including for customer service, to provide you with updates and other
+          information relating to the website, and for marketing and promotional
           purposes
         </li>
         <li>Send you emails</li>
@@ -78,7 +78,7 @@ const Privacy = () => {
         files include internet protocol (IP) addresses, browser type, Internet
         Service Provider (ISP), date and time stamp, referring/exit pages, and
         possibly the number of clicks. These are not linked to any information
-        that is personally identifiable. The purpose of the information is htmlFor
+        that is personally identifiable. The purpose of the information is for
         analyzing trends, administering the site, tracking users movement on
         the website, and gathering demographic information.
       </p>
@@ -88,7 +88,7 @@ const Privacy = () => {
       <p className="text-justify">
         Some of advertisers on our site may use cookies and web beacons. Our
         advertising partners are listed below. Each of our advertising partners
-        has their own Privacy Policy htmlFor their policies on user data. htmlFor easier
+        has their own Privacy Policy for their policies on user data. for easier
         access, we hyperlinked to their Privacy Policies below.
       </p>
 
@@ -106,7 +106,7 @@ const Privacy = () => {
       <h2 className="sm:text-md md:text-xl text-5sm lg:text-xl  font-bold my-5">Advertising Partners Privacy Policies</h2>
 
       <p className="text-justify">
-        You may consult this list to find the Privacy Policy htmlFor each of the
+        You may consult this list to find the Privacy Policy for each of the
         advertising partners of COKWP.
       </p>
 
@@ -130,7 +130,7 @@ const Privacy = () => {
       <p className="text-justify">
         COKWP&apos Privacy Policy does not apply to other advertisers or websites.
         Thus, we are advising you to consult the respective Privacy Policies of
-        these third-party ad servers htmlFor more detailed information. It may
+        these third-party ad servers for more detailed information. It may
         include their practices and instructions about how to opt-out of certain
         options.{" "}
       </p>
@@ -174,7 +174,7 @@ const Privacy = () => {
       </p>
       <p className="text-justify">
         The right to access – You have the right to request copies of your
-        personal data. We may charge you a small fee htmlFor this service.
+        personal data. We may charge you a small fee for this service.
       </p>
       <p className="text-justify">
         The right to rectification – You have the right to request that we
@@ -207,7 +207,7 @@ const Privacy = () => {
       <h2 className="sm:text-md md:text-xl text-5sm lg:text-xl  font-bold my-5">Children&apos Information</h2>
 
       <p className="text-justify">
-        Another part of our priority is adding protection htmlFor children while
+        Another part of our priority is adding protection for children while
         using the internet. We encourage parents and guardians to observe,
         participate in, and/or monitor and guide their online activity.
       </p>

@@ -12,7 +12,7 @@ const Terms = () => {
       </p>
 
       <p className="text-justify">
-        These terms and conditions outline the rules and regulations htmlFor the use
+        These terms and conditions outline the rules and regulations for the use
         of COKWP&apos Website, located at huntcode.store.
       </p>
 
@@ -31,7 +31,7 @@ const Terms = () => {
         refers to both the Client and ourselves. All terms refer to the offer,
         acceptance and consideration of payment necessary to undertake the
         process of our assistance to the Client in the most appropriate manner
-        htmlFor the express purpose of meeting the Client needs in respect of
+        for the express purpose of meeting the Client needs in respect of
         provision of the Company stated services, in accordance with and
         subject to, prevailing law of Netherlands. Any use of the above
         terminology or other words in the singular, plural, capitalization
@@ -50,8 +50,8 @@ const Terms = () => {
 
       <p className="text-justify">
         Most interactive websites use cookies to let us retrieve the user’s
-        details htmlFor each visit. Cookies are used by our website to enable the
-        functionality of certain areas to make it easier htmlFor people visiting our
+        details for each visit. Cookies are used by our website to enable the
+        functionality of certain areas to make it easier for people visiting our
         website. Some of our affiliate/advertising partners may also use
         cookies.
       </p>
@@ -62,8 +62,8 @@ const Terms = () => {
 
       <p className="text-justify">
         Unless otherwise stated, COKWP and/or its licensors own the intellectual
-        property rights htmlFor all material on COKWP. All intellectual property
-        rights are reserved. You may access this from COKWP htmlFor your own
+        property rights for all material on COKWP. All intellectual property
+        rights are reserved. You may access this from COKWP for your own
         personal use subjected to restrictions set in these terms and
         conditions.
       </p>
@@ -81,14 +81,14 @@ const Terms = () => {
       </p>
 
       <p className="text-justify">
-        Parts of this website offer an opportunity htmlFor users to post and
+        Parts of this website offer an opportunity for users to post and
         exchange opinions and information in certain areas of the website. COKWP
         does not filter, edit, publish or review Comments prior to their
         presence on the website. Comments do not reflect the views and opinions
         of COKWP,its agents and/or affiliates. Comments reflect the views and
         opinions of the person who post their views and opinions. To the extent
-        permitted by applicable laws, COKWP shall not be liable htmlFor the Comments
-        or htmlFor any liability, damages or expenses caused and/or suffered as a
+        permitted by applicable laws, COKWP shall not be liable for the Comments
+        or for any liability, damages or expenses caused and/or suffered as a
         result of any use of and/or posting of and/or appearance of the Comments
         on this website.
       </p>
@@ -197,7 +197,7 @@ const Terms = () => {
         e-mail to COKWP. Please include your name, your organization name,
         contact information as well as the URL of your site, a list of any URLs
         from which you intend to link to our Website, and a list of the URLs on
-        our site to which you would like to link. Wait 2-3 weeks htmlFor a response.
+        our site to which you would like to link. Wait 2-3 weeks for a response.
       </p>
 
       <p className="text-justify">
@@ -215,7 +215,7 @@ const Terms = () => {
       </ul>
 
       <p className="text-justify">
-        No use of COKWP&apos logo or other artwork will be allowed htmlFor linking
+        No use of COKWP&apos logo or other artwork will be allowed for linking
         absent a trademark license agreement.
       </p>
 
@@ -234,7 +234,7 @@ const Terms = () => {
       </h3>
 
       <p className="text-justify">
-        We shall not be hold responsible htmlFor any content that appears on your
+        We shall not be hold responsible for any content that appears on your
         Website. You agree to protect and defend us against all claims that is
         rising on your Website. No link(s) should appear on any Website that may
         be interpreted as libelous, obscene or criminal, or which infringes,
@@ -266,7 +266,7 @@ const Terms = () => {
       </h3>
 
       <p className="text-justify">
-        If you find any link on our Website that is offensive htmlFor any reason,
+        If you find any link on our Website that is offensive for any reason,
         you are free to contact and inform us any moment. We will consider
         requests to remove links but we are not obligated to or so or to respond
         to you directly.
@@ -291,10 +291,10 @@ const Terms = () => {
 
       <ul>
         <li>
-          limit or exclude our or your liability htmlFor death or personal injury;
+          limit or exclude our or your liability for death or personal injury;
         </li>
         <li>
-          limit or exclude our or your liability htmlFor fraud or fraudulent
+          limit or exclude our or your liability for fraud or fraudulent
           misrepresentation;
         </li>
         <li>
@@ -311,13 +311,13 @@ const Terms = () => {
         The limitations and prohibitions of liability set in this Section and
         elsewhere in this disclaimer: (a) are subject to the preceding
         paragraph; and (b) govern all liabilities arising under the disclaimer,
-        including liabilities arising in contract, in tort and htmlFor breach of
+        including liabilities arising in contract, in tort and for breach of
         statutory duty.
       </p>
 
       <p className="text-justify">
         As long as the website and the information and services on the website
-        are provided free of charge, we will not be liable htmlFor any loss or
+        are provided free of charge, we will not be liable for any loss or
         damage of any nature.
       </p>
     </>

@@ -26,7 +26,7 @@ const Signup = () => {
     };
 
     console.log(userDetail, JSON.stringify(data));
-    fetch("http://localhost:1337/api/cokwps/", {
+    fetch("https://strapi-for-cokwp.herokuapp.com/api/cokwps/", {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
