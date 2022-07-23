@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { withSnackbar, useSnackbar } from "notistack";
+import Link from "next/link";
 
 const Signup = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -15,18 +16,18 @@ const Signup = () => {
     setUserDetail({ ...userDetail, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      data: {
-        userName: userDetail.name,
+      // data: {
+        username: userDetail.name,
         email: userDetail.email,
         password: userDetail.password,
-      },
+      // },
     };
 
-    console.log(userDetail, JSON.stringify(data));
-    fetch("https://strapi-for-cokwp.herokuapp.com/api/cokwps/", {
+    // console.log(userDetail, JSON.stringify(data));
+      const response = await  fetch("https://strapi-for-cokwp.herokuapp.com/api/auth/local/register", {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
@@ -34,18 +35,26 @@ const Signup = () => {
       body: JSON.stringify(data),
       // body: data,
     })
-      .then((response) => {
-        response.text();
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        enqueueSnackbar("Account created successfully", { variant: "success" });
-        setUserDetail({ name: "", email: "", password: "" });
-      })
-      .catch((error) => {
-        enqueueSnackbar("Something went wrong", { variant: "error" });
-        console.error("Error:", error);
-      });
+    
+    const res = await response.json()
+    console.log(res)
+    if (res?.jwt) {
+      enqueueSnackbar("Account Registered Successfully", {variant: "success"})
+    } else {
+      enqueueSnackbar(res?.error?.message, {variant: "error"})
+    }
+      // .then((response) => {
+      //   response.text();
+      // })
+      // .then((data) => {
+      //   console.log("Success:", data);
+      //   enqueueSnackbar("Account created successfully", { variant: "success" });
+      //   setUserDetail({ name: "", email: "", password: "" });
+      // })
+      // .catch((error) => {
+      //   enqueueSnackbar("Something went wrong", { variant: "error" });
+      //   console.error("Error:", error);
+      // });
   };
 
   return (
@@ -121,7 +130,7 @@ const Signup = () => {
                 Sign Up
               </button>
               <p className="text-sm text-gray-500 mt-3">
-                Already have an account
+                Already have an account | Please <Link href="/login"><button style={{color: "blue"}}>Login</button></Link>
               </p>
             </form>
           </div>
