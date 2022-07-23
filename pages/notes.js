@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotes } from '../redux/Actions/nodes'
 
-const notes = () => {
+const Notes = () => {
     const data = useSelector((state)=>state.notes)
     const [authTT, setAuthTT] = useState("")
     const dispatch = useDispatch()
@@ -36,4 +36,4 @@ const notes = () => {
   )
 }
 
-export default notes
+export default Notes
