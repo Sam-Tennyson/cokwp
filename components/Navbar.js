@@ -6,26 +6,38 @@ import { BiHome } from "react-icons/bi";
 import { TiContacts } from "react-icons/ti";
 import { GiHamburgerMenu } from "react-icons/gi";
 
+
+const ISSERVER = typeof window === "undefined"
+
 const Navbar = () => {
   const [showHead, setShowHead] = useState("");
   const [showOption, setShowOption] = useState(true);
   const [auth, setAuth] = useState("");
-  // const [flag, setFlag] = useState(false);
+  const [flag, setFlag] = useState(false);
+  let token;
+  
+  useEffect(()=> {
+    if (!ISSERVER) {
+      token =localStorage.getItem("authToken")
+      setAuth(token);
+    }
+    
+  },[])
+  const  closeModal = ()=> {
+    setFlag(false)
+  }
 
-  // const  closeModal = ()=> {
-  //   setFlag(false)
-  // }
+  const handleOpenModal = ()=> {
+    console.log("asdf")
+    setFlag(true)
+  }
 
-  // const handleOpenModal = ()=> {
-  //   console.log("asdf")
-  //   setFlag(true)
-  // }
-  setTimeout(function () {
-    let token = localStorage.getItem("authToken");
-    setAuth(token);
-  }, 50);
-  // useEffect(() => {
-  // }, [authT]);
+
+  // setTimeout(function () {
+  //   let token = localStorage.getItem("authToken");
+  //   setAuth(token);
+  // }, 50);
+
   console.log(auth, "auth");
   return (
     <>
@@ -50,16 +62,7 @@ const Navbar = () => {
                 Home
               </a>
             </Link>
-            {/* <Link href={"/blogs"}> */}
-            {/* <Link href={"/"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                // onClick={() => setShowHead("Blogs")}
-                onClick={handleOpenModal}
-              >
-                Blogs
-              </a>
-            </Link> */}
+
             <BiMessageRoundedDetail />
             <Link href={"/about"}>
               <a
@@ -78,7 +81,7 @@ const Navbar = () => {
                 Contact Us
               </a>
             </Link>
-            {!auth.length ? (
+            {!auth  ? (
               <>
                 <Link href={"/signup"}>
                   <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2">
@@ -105,11 +108,7 @@ const Navbar = () => {
               </Link>
             )}
           </nav>
-          {/* <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Button
-      <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
-        <path d="M5 12h14M12 5l7 7-7 7"></path>
-      </svg>
-    </button> */}
+          
           <div
             onClick={() => setShowOption(!showOption)}
             className="md:ml-auto flex flex-row block md:hidden  flex-wrap items-center  justify-center"
@@ -135,16 +134,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* <Link href={"/blogs"}> */}
-        {/* <Link href={"/"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                // onClick={() => setShowHead("Blogs")}
-                onClick={handleOpenModal}
-              >
-                Blogs
-              </a>
-            </Link> */}
+        
         <div className="flex flex-row mb-3 items-center">
           <BiMessageRoundedDetail />
           <Link href={"/about"}>
@@ -168,7 +158,7 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex flex-row mb-3 items-center">
-          {!auth.length ? (
+          {!auth && auth.length ? (
             <>
               <Link href={"/signup"}>
                 <button
@@ -205,8 +195,8 @@ const Navbar = () => {
             </Link>
           )}
         </div>
-        {/* {auth.length &&  */}
-        {/* <div className="flex flex-row mb-3 items-center">
+        {auth.length && 
+        <div className="flex flex-row mb-3 items-center">
         <Link href={"/signup"}>
             <button
               className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2"
@@ -218,27 +208,9 @@ const Navbar = () => {
             </button>
           </Link> 
         </div>
-        {/* // } */}
+        }
       </nav>
-      {/* <nav className=" bg-cyan-600 border-gray-200 py-5  ">
-        <div className="container flex flex-wrap justify-between items-center mx-auto flex-col sm:flex sm:flex-row sm:justify-between ">
-          <Link href={"/"}>
-            <a className="flex items-center lg:mx-20">
-              <span className="self-center mx-8 text-xl text-white font-semibold whitespace-nowrap my-1.5 dark:text-white">
-                {showHead ? showHead : "Dashboard"}
-              </span>
-            </a>
-          </Link>
-          <input
-            type="search"
-            className="px-5 py-2 rounded sm:w-2/5 md:w-2/5 lg:w-1/5 my-1.5"
-            placeholder="Search here..."
-          />
-        </div>
-      </nav> */}
-      {/* <div className="mx-3 sm:w-4/5  sm:m-auto  ">
-      <img src="/child.png" alt="error" />
-      </div> */}
+      
     </>
   );
 };

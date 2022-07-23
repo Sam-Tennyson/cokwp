@@ -71,7 +71,7 @@ export default function Home(props) {
   }
 
   const handleOpenModal = ()=> {
-    console.log("asdf")
+    // console.log("asdf")
     setFlag(true)
   }
   return (

@@ -70,7 +70,7 @@ export default function MoreVideo(props) {
   }
 
   const handleOpenModal = ()=> {
-    console.log("asdf")
+    // console.log("asdf")
     setFlag(true)
   }
 

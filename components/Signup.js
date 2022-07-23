@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { withSnackbar, useSnackbar } from "notistack";
 import Link from "next/link";
+import Router from "next/router";
 
 const API_LOCAL_URL="http://localhost:1337";
 const API_HR_URL="https://strapi-for-cokwp.herokuapp.com"
@@ -40,24 +41,19 @@ const Signup = () => {
     })
     
     const res = await response.json()
-    console.log(res)
+    // console.log(res)
     if (res?.jwt) {
       enqueueSnackbar("Account Registered Successfully", {variant: "success"})
+      setUserDetail({
+        name: "",
+        email: "",
+        password: "",
+      })
+      Router.push("/login")
     } else {
       enqueueSnackbar(res?.error?.message, {variant: "error"})
     }
-      // .then((response) => {
-      //   response.text();
-      // })
-      // .then((data) => {
-      //   console.log("Success:", data);
-      //   enqueueSnackbar("Account created successfully", { variant: "success" });
-      //   setUserDetail({ name: "", email: "", password: "" });
-      // })
-      // .catch((error) => {
-      //   enqueueSnackbar("Something went wrong", { variant: "error" });
-      //   console.error("Error:", error);
-      // });
+    
   };
 
   return (

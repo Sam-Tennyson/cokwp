@@ -44,30 +44,17 @@ const Login = () => {
       // body: data,
     })
     const res = await response.json();
-    console.log(res); 
+    // console.log(res); 
     if (res?.jwt) {
       enqueueSnackbar("Login Successfully", {variant: "success"})
       localStorage.setItem("authToken", res?.jwt)
       Router.push("/notes")
-      // if (res?.jwt) {
-      //   const privateRoute = await fetch("http://localhost:1337/api/notes/", {
-      //     method: "GET",
-      //     headers: {
-      //       "content-Type": "application/json",
-      //     "accept": "application/json",
-      //       "Authorization": `Bearer ${res?.jwt}`
-      //     }
-        // })
-      // const noteData = await privateRoute.json()
-      // dispatch(setNotes(noteData.data))
-      // console.log(noteData)
-      // }
     } else {
       enqueueSnackbar(res?.error?.message,{variant: "error"})
     }
 
   };
-  console.log(notesD)
+  // console.log(notesD)
   return (
     <>
       <section className="text-gray-600 body-font relative">
