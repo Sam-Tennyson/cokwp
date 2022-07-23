@@ -6,6 +6,10 @@ import Router from "next/router";
 import set_Notes from "../redux/Reducers/Notes";
 import { setNotes } from "../redux/Actions/nodes";
 import { useDispatch, useSelector } from "react-redux";
+
+const API_LOCAL_URL="http://localhost:1337"
+const API_HR_URL="https://strapi-for-cokwp.herokuapp.com"
+
 const Login = () => {
   const dispatch = useDispatch();
   const notesD = useSelector((state)=> state.notes)
@@ -16,13 +20,13 @@ const Login = () => {
   });
 
   const handleChange = (e) => {
-    // console.log(e);
     const { name, value } = e.target;
     setUserDetail({ ...userDetail, [name]: value });
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(process.env.API_LOCAL_URL);
     const data = {
       // data: {
         identifier: userDetail.email,
@@ -30,7 +34,7 @@ const Login = () => {
       // },
     };
 
-    const response = await fetch("https://strapi-for-cokwp.herokuapp.com/api/auth/local/", {
+    const response = await fetch(`${API_HR_URL}/api/auth/local/`, {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",

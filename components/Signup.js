@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { withSnackbar, useSnackbar } from "notistack";
 import Link from "next/link";
 
+const API_LOCAL_URL="http://localhost:1337";
+const API_HR_URL="https://strapi-for-cokwp.herokuapp.com"
+
 const Signup = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [userDetail, setUserDetail] = useState({
@@ -27,7 +30,7 @@ const Signup = () => {
     };
 
     // console.log(userDetail, JSON.stringify(data));
-      const response = await  fetch("https://strapi-for-cokwp.herokuapp.com/api/auth/local/register", {
+      const response = await  fetch(`${API_HR_URL}/api/auth/local/register`, {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
