@@ -81,7 +81,7 @@ const Navbar = () => {
                 Contact Us
               </a>
             </Link>
-            {!auth  ? (
+            {!auth && auth.length ? (
               <>
                 <Link href={"/signup"}>
                   <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2">

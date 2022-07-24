@@ -1,18 +1,13 @@
 import React, { useState } from "react";
-import { withSnackbar, useSnackbar } from "notistack";
-import axios from "axios";
+import { useSnackbar } from "notistack";
 import Link from "next/link";
 import Router from "next/router";
-import set_Notes from "../redux/Reducers/Notes";
-import { setNotes } from "../redux/Actions/nodes";
 import { useDispatch, useSelector } from "react-redux";
 
-const API_LOCAL_URL="http://localhost:1337"
-const API_HR_URL="https://strapi-for-cokwp.herokuapp.com"
+const API_LOCAL_URL = "http://localhost:1337";
+const API_HR_URL = "https://strapi-for-cokwp.herokuapp.com";
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const notesD = useSelector((state)=> state.notes)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [userDetail, setUserDetail] = useState({
     email: "",
@@ -23,38 +18,34 @@ const Login = () => {
     const { name, value } = e.target;
     setUserDetail({ ...userDetail, [name]: value });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(process.env.API_LOCAL_URL);
     const data = {
-      // data: {
-        identifier: userDetail.email,
-        password: userDetail.password,
-      // },
+      identifier: userDetail.email,
+      password: userDetail.password,
     };
 
     const response = await fetch(`${API_HR_URL}/api/auth/local/`, {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify(data),
-      // body: data,
-    })
+    });
     const res = await response.json();
-    // console.log(res); 
-    if (res?.jwt) {
-      enqueueSnackbar("Login Successfully", {variant: "success"})
-      localStorage.setItem("authToken", res?.jwt)
-      Router.push("/notes")
-    } else {
-      enqueueSnackbar(res?.error?.message,{variant: "error"})
-    }
 
+    if (res?.jwt) {
+      enqueueSnackbar("Login Successfully", { variant: "success" });
+      localStorage.setItem("authToken", res?.jwt);
+      Router.push("/notes");
+    } else {
+      enqueueSnackbar(res?.error?.message, { variant: "error" });
+    }
   };
-  // console.log(notesD)
+
   return (
     <>
       <section className="text-gray-600 body-font relative">
@@ -100,13 +91,15 @@ const Login = () => {
                   placeholder="Enter your password"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
-                {/* <textarea id="message" name="message" className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea> */}
               </div>
               <button className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
                 Login
               </button>
               <p className="text-sm text-gray-500 mt-3">
-                Don &apos;t have an account | Please <Link href="/signup"><button style={{color: "blue"}}>Sign Up</button></Link>
+                Don &apos;t have an account | Please{" "}
+                <Link href="/signup">
+                  <button style={{ color: "blue" }}>Sign Up</button>
+                </Link>
               </p>
             </form>
           </div>
