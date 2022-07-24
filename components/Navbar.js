@@ -15,14 +15,15 @@ const Navbar = () => {
   const [auth, setAuth] = useState("");
   const [flag, setFlag] = useState(false);
   let token;
+
+  if (!ISSERVER) {
+    token =localStorage.getItem("authToken")
+  }
   
   useEffect(()=> {
-    if (!ISSERVER) {
-      token =localStorage.getItem("authToken")
-      setAuth(token);
-    }
+    setAuth(token);
     
-  },[])
+  },[token])
   const  closeModal = ()=> {
     setFlag(false)
   }
@@ -81,7 +82,7 @@ const Navbar = () => {
                 Contact Us
               </a>
             </Link>
-            {!auth && auth.length ? (
+            {!auth ? (
               <>
                 <Link href={"/signup"}>
                   <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2">
@@ -95,12 +96,13 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              <Link href={"/login"}>
+              <Link href={"/"}>
                 <button
                   className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
                   onClick={() => {
                     setShowOption(true);
                     localStorage.setItem("authToken","")
+                    setAuth("")
                   }}
                 >
                   Logout
@@ -158,7 +160,7 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex flex-row mb-3 items-center">
-          {!auth && auth.length ? (
+          {!auth ? (
             <>
               <Link href={"/signup"}>
                 <button
@@ -182,12 +184,13 @@ const Navbar = () => {
               </Link>
             </>
           ) : (
-            <Link href={"/login"}>
+            <Link href={"/"}>
               <button
                 className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
                 onClick={() => {
                   setShowOption(true);
                   localStorage.setItem("authToken","")
+                  setAuth("")
                 }}
               >
                 Logout
@@ -195,20 +198,21 @@ const Navbar = () => {
             </Link>
           )}
         </div>
-        {auth.length && 
+        {/* {auth.length && 
         <div className="flex flex-row mb-3 items-center">
-        <Link href={"/signup"}>
+        <Link href={"/"}>
             <button
               className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2"
               onClick={() => {
                 setShowOption(true);
+
               }}
             >
               Logout
             </button>
           </Link> 
         </div>
-        }
+        } */}
       </nav>
       
     </>
