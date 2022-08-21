@@ -33,16 +33,9 @@ const Navbar = () => {
     setFlag(true)
   }
 
-
-  // setTimeout(function () {
-  //   let token = localStorage.getItem("authToken");
-  //   setAuth(token);
-  // }, 50);
-
   console.log(auth, "auth");
   return (
     <>
-      {/* <CustomModal openModal={flag}  onClickClose={closeModal} /> */}
       <header className="text-gray-500 sm:text-sm body-font m-auto border-b-0 ">
         <div className="container mx-auto md:mb-4 flex flex-wrap p-3 px-5   justify-between flex-row md:flex-row items-center">
           <Link href={"/"}>
@@ -198,21 +191,7 @@ const Navbar = () => {
             </Link>
           )}
         </div>
-        {/* {auth.length && 
-        <div className="flex flex-row mb-3 items-center">
-        <Link href={"/"}>
-            <button
-              className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2"
-              onClick={() => {
-                setShowOption(true);
-
-              }}
-            >
-              Logout
-            </button>
-          </Link> 
-        </div>
-        } */}
+        
       </nav>
       
     </>

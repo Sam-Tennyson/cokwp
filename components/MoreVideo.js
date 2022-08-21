@@ -145,7 +145,7 @@ export default function MoreVideo(props) {
 
                   return (
                     <div key={id} className="p-4 md:4/5 lg:w-1/3 ">
-                      {/* <div className=" bg-red-500 "> */}
+          
                       <div className="h-full shadow-lg  bg-opacity-75 px-8 pt-16 pb-12 rounded-lg overflow-hidden text-center relative">
                         <a
                           href={`https://www.youtube.com/watch?v=${resourceId?.videoId}`}

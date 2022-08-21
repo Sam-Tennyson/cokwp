@@ -12,7 +12,6 @@ const about = () => {
     Hello guys! I am Priya!
 </p>
  <p className="text-justify">
-    {/* Welcome to <b>huntcode777.store</b>, your number one */}
     Welcome to <b>COWKP</b>, your number one
     source for all things related to <b>enthusiastic children</b>.
     I m dedicated
