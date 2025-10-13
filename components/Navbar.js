@@ -35,14 +35,6 @@ const Navbar = () => {
                 Quiz
               </a>
             </Link>}
-            <Link href={"/"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                onClick={() => setShowHead("Dashboard")}
-              >
-                Home
-              </a>
-            </Link>
 
             <BiMessageRoundedDetail />
             <Link href={"/about"}>
