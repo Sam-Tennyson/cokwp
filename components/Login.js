@@ -86,12 +86,6 @@ const Login = () => {
               <button className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
                 Login
               </button>
-              <p className="text-sm text-gray-500 mt-3">
-                Don &apos;t have an account | Please{" "}
-                <Link href="/signup">
-                  <button style={{ color: "blue" }}>Sign Up</button>
-                </Link>
-              </p>
             </form>
           </div>
         </div>

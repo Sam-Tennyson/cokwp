@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Sticky footer layout helper for older pages that may not use the wrapper */
+html, body, #__next {
+  height: 100%;
+}

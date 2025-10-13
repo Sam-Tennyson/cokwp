@@ -19,11 +19,13 @@ function MyApp({ Component, pageProps }) {
           horizontal: "right",
         }}
       >
-        <Navbar foot={foot} />
-        <div className="w-4.5/5 sm:w-4/5 my-5 m-auto">
-          <Component {...pageProps} />
+        <div className="min-h-screen flex flex-col">
+          <Navbar foot={foot} />
+          <main className="w-4/5 my-5 m-auto flex-1">
+            <Component {...pageProps} />
+          </main>
+          <Footer />
         </div>
-        <Footer />
       </SnackbarProvider>
       {/* </PersistGate> */}
     </>

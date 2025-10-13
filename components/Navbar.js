@@ -15,7 +15,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="text-gray-500 sm:text-sm body-font m-auto border-b-0 ">
+      <header className="text-gray-500 sm:text-sm body-font m-auto border-b-0 w-full">
         <div className="container mx-auto md:mb-4 flex flex-wrap p-3 px-5   justify-between flex-row md:flex-row items-center">
           <Link href={"/"}>
             <a className="flex title-font font-medium items-center lg:mx-20  text-gray-900 mb-4 md:mb-0">
@@ -78,10 +78,10 @@ const Navbar = () => {
             ) : (
               <button
                 className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-                onClick={() => {
+                onClick={async () => {
                   setShowOption(true);
                   localStorage.setItem("authToken", "")
-                  handleSignOut()
+                  await handleSignOut()
                 }}
               >
                 Logout
@@ -91,7 +91,7 @@ const Navbar = () => {
 
           <div
             onClick={() => setShowOption(!showOption)}
-            className="md:ml-auto flex flex-row block md:hidden  flex-wrap items-center  justify-center"
+            className="md:ml-auto flex flex-row md:hidden  flex-wrap items-center  justify-center"
           >
             <GiHamburgerMenu />
           </div>
@@ -171,10 +171,10 @@ const Navbar = () => {
           ) : (
             <button
               className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-              onClick={() => {
-                handleSignOut()
+              onClick={async () => {
                 setShowOption(true);
                 localStorage.setItem("authToken", "")
+                await handleSignOut()
 
               }}
             >
