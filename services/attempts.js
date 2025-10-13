@@ -56,3 +56,33 @@ export async function calculateAttemptScore(attemptId) {
   return data
 }
 
+export async function fetchAttemptById(attemptId) {
+  const { data, error } = await supabase
+    .from('quiz_attempts')
+    .select('*')
+    .eq('id', attemptId)
+    .single()
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data
+}
+
+export async function fetchAttemptsByUserId(userId) {
+
+
+  let query = supabase
+    .from('quiz_attempts')
+    .select('*')
+    .eq('user_id', userId)
+    .order('started_at', { ascending: false })
+
+
+
+  const { data, error } = await query;
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data
+}
+

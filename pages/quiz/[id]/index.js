@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { fetchQuizById, fetchQuizQuestions } from '../../services/quizzes'
-import { createQuizAttempt, completeQuizAttempt } from '../../services/attempts'
-import { createAnswersBatch, calculateAttemptScore } from '../../services/answers'
-import { useSessionStore } from '../../stores/session'
-import QuizInstructions from '../../components/QuizInstructions'
-import QuizQuestion from '../../components/QuizQuestion'
-import QuizProgress from '../../components/QuizProgress'
+import { fetchQuizById, fetchQuizQuestions } from '../../../services/quizzes'
+import { createQuizAttempt, completeQuizAttempt } from '../../../services/attempts'
+import { createAnswersBatch, calculateAttemptScore } from '../../../services/answers'
+import { useSessionStore } from '../../../stores/session'
+import QuizInstructions from '../../../components/QuizInstructions'
+import QuizQuestion from '../../../components/QuizQuestion'
+import QuizProgress from '../../../components/QuizProgress'
 
 const QUIZ_STAGES = {
   LOADING: 'loading',
@@ -237,5 +237,4 @@ const QuizDetail = () => {
 }
 
 export default QuizDetail
-
 

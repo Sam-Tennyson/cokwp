@@ -35,6 +35,14 @@ const Navbar = () => {
                 Quiz
               </a>
             </Link>}
+            {isAuthenticated && <Link href={"/results"}>
+              <a
+                className="mr-5 hover:text-gray-900"
+                onClick={() => setShowHead("Results")}
+              >
+                Results
+              </a>
+            </Link>}
 
             <BiMessageRoundedDetail />
             <Link href={"/about"}>
@@ -105,6 +113,16 @@ const Navbar = () => {
           </Link>}
         </div>
 
+        {isAuthenticated && <div className="flex flex-row mb-3 items-center">
+          <Link href={"/results"}>
+            <a
+              className="mr-5 hover:text-gray-900"
+              onClick={() => setShowOption(true)}
+            >
+              📊 Results
+            </a>
+          </Link>
+        </div>}
 
         <div className="flex flex-row mb-3 items-center">
           <BiMessageRoundedDetail />
