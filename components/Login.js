@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import { useSnackbar } from "notistack";
 import Link from "next/link";
 import Router from "next/router";
-import { useDispatch, useSelector } from "react-redux";
-
-const API_LOCAL_URL = "http://localhost:1337";
-const API_HR_URL = "https://strapi-for-cokwp.herokuapp.com";
+import { useSessionStore } from "../stores/session";
 
 const Login = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { handleSignIn } = useSessionStore((state) => state);
   const [userDetail, setUserDetail] = useState({
     email: "",
     password: "",
@@ -27,23 +25,16 @@ const Login = () => {
       password: userDetail.password,
     };
 
-    const response = await fetch(`${API_HR_URL}/api/auth/local/`, {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const res = await response.json();
-
-    if (res?.jwt) {
+    try {
+      const res = await handleSignIn(userDetail.email, userDetail.password);
       enqueueSnackbar("Login Successfully", { variant: "success" });
       localStorage.setItem("authToken", res?.jwt);
       Router.push("/notes");
-    } else {
-      enqueueSnackbar(res?.error?.message, { variant: "error" });
+    } catch (error) {
+      enqueueSnackbar(error?.message, { variant: "error" });
+      return;
     }
+
   };
 
   return (

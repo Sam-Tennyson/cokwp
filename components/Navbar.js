@@ -5,35 +5,14 @@ import { BiMessageRoundedDetail } from "react-icons/bi";
 import { BiHome } from "react-icons/bi";
 import { TiContacts } from "react-icons/ti";
 import { GiHamburgerMenu } from "react-icons/gi";
-
-
-const ISSERVER = typeof window === "undefined"
+import { useSessionStore } from "../stores/session";
 
 const Navbar = () => {
+  const { handleSignOut } = useSessionStore()
+  const isAuthenticated = useSessionStore((state) => state.isAuthenticated)
   const [showHead, setShowHead] = useState("");
   const [showOption, setShowOption] = useState(true);
-  const [auth, setAuth] = useState("");
-  const [flag, setFlag] = useState(false);
-  let token;
 
-  if (!ISSERVER) {
-    token =localStorage.getItem("authToken")
-  }
-  
-  useEffect(()=> {
-    setAuth(token);
-    
-  },[token])
-  const  closeModal = ()=> {
-    setFlag(false)
-  }
-
-  const handleOpenModal = ()=> {
-    console.log("asdf")
-    setFlag(true)
-  }
-
-  console.log(auth, "auth");
   return (
     <>
       <header className="text-gray-500 sm:text-sm body-font m-auto border-b-0 ">
@@ -48,6 +27,14 @@ const Navbar = () => {
             className={`md:ml-auto md:flex hidden md:flex-row md:flex-wrap md:items-center  `}
           >
             <BiHome />
+            {isAuthenticated && <Link href={"/quiz"}>
+              <a
+                className="mr-5 hover:text-gray-900"
+                onClick={() => setShowHead("Dashboard")}
+              >
+                Quiz
+              </a>
+            </Link>}
             <Link href={"/"}>
               <a
                 className="mr-5 hover:text-gray-900"
@@ -75,13 +62,13 @@ const Navbar = () => {
                 Contact Us
               </a>
             </Link>
-            {!auth ? (
+            {!isAuthenticated ? (
               <>
-                <Link href={"/signup"}>
+                {/* <Link href={"/signup"}>
                   <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2">
                     Sign Up
                   </button>
-                </Link>
+                </Link> */}
                 <Link href={"/login"}>
                   <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2">
                     Login
@@ -89,21 +76,19 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              <Link href={"/"}>
-                <button
-                  className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-                  onClick={() => {
-                    setShowOption(true);
-                    localStorage.setItem("authToken","")
-                    setAuth("")
-                  }}
-                >
-                  Logout
-                </button>
-              </Link>
+              <button
+                className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
+                onClick={() => {
+                  setShowOption(true);
+                  localStorage.setItem("authToken", "")
+                  handleSignOut()
+                }}
+              >
+                Logout
+              </button>
             )}
           </nav>
-          
+
           <div
             onClick={() => setShowOption(!showOption)}
             className="md:ml-auto flex flex-row block md:hidden  flex-wrap items-center  justify-center"
@@ -113,12 +98,19 @@ const Navbar = () => {
         </div>
       </header>
       <nav
-        className={` text-gray-500 bg-yellow-100 p-3 ${
-          showOption ? "hidden" : "flex"
-        } text-sm body-font m-auto border-b-0 ml-auto md:hidden flex-col flex-wrap items-center `}
+        className={` text-gray-500 bg-yellow-100 p-3 ${showOption ? "hidden" : "flex"
+          } text-sm body-font m-auto border-b-0 ml-auto md:hidden flex-col flex-wrap items-center `}
       >
         <div className="flex  flex-row mb-3 items-center">
           <BiHome />
+          {isAuthenticated && <Link href={"/quiz"}>
+            <a
+              className="mr-5 hover:text-gray-900"
+              onClick={() => setShowOption(true)}
+            >
+              Quiz
+            </a>
+          </Link>}
           <Link href={"/"}>
             <a
               className="mr-5 hover:text-gray-900"
@@ -129,7 +121,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        
+
         <div className="flex flex-row mb-3 items-center">
           <BiMessageRoundedDetail />
           <Link href={"/about"}>
@@ -153,9 +145,9 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex flex-row mb-3 items-center">
-          {!auth ? (
+          {!isAuthenticated ? (
             <>
-              <Link href={"/signup"}>
+              {/* <Link href={"/signup"}>
                 <button
                   className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2"
                   onClick={() => {
@@ -164,7 +156,7 @@ const Navbar = () => {
                 >
                   Sign Up
                 </button>
-              </Link>
+              </Link> */}
               <Link href={"/login"}>
                 <button
                   className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
@@ -177,23 +169,22 @@ const Navbar = () => {
               </Link>
             </>
           ) : (
-            <Link href={"/"}>
-              <button
-                className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-                onClick={() => {
-                  setShowOption(true);
-                  localStorage.setItem("authToken","")
-                  setAuth("")
-                }}
-              >
-                Logout
-              </button>
-            </Link>
+            <button
+              className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
+              onClick={() => {
+                handleSignOut()
+                setShowOption(true);
+                localStorage.setItem("authToken", "")
+
+              }}
+            >
+              Logout
+            </button>
           )}
         </div>
-        
+
       </nav>
-      
+
     </>
   );
 };
