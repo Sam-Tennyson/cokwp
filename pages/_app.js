@@ -19,9 +19,9 @@ function MyApp({ Component, pageProps }) {
           horizontal: "right",
         }}
       >
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col w-full">
           <Navbar foot={foot} />
-          <main className="w-4/5 my-5 m-auto flex-1">
+          <main className="md:w-4/5 w-full my-5 mx-auto flex-1 common-padding">
             <Component {...pageProps} />
           </main>
           <Footer />

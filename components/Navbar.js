@@ -24,7 +24,7 @@ const Navbar = () => {
             </a>
           </Link>
           <nav
-            className={`md:ml-auto md:flex hidden md:flex-row md:flex-wrap md:items-center  `}
+            className={`md:ml-auto md:flex hidden md:flex-row md:flex-wrap md:items-center `}
           >
             <BiHome />
             {isAuthenticated && <Link href={"/quiz"}>
@@ -99,7 +99,7 @@ const Navbar = () => {
       </header>
       <nav
         className={` text-gray-500 bg-yellow-100 p-3 ${showOption ? "hidden" : "flex"
-          } text-sm body-font m-auto border-b-0 ml-auto md:hidden flex-col flex-wrap items-center `}
+          } text-sm body-font m-auto border-b-0 ml-auto md:hidden flex-col flex-wrap items-center w-full`}
       >
         <div className="flex  flex-row mb-3 items-center">
           <BiHome />
@@ -111,14 +111,6 @@ const Navbar = () => {
               Quiz
             </a>
           </Link>}
-          <Link href={"/"}>
-            <a
-              className="mr-5 hover:text-gray-900"
-              onClick={() => setShowOption(true)}
-            >
-              Home
-            </a>
-          </Link>
         </div>
 
 

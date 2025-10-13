@@ -11,7 +11,8 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserDetail({ ...userDetail, [name]: value });
@@ -24,15 +25,17 @@ const Login = () => {
       identifier: userDetail.email,
       password: userDetail.password,
     };
-
+    
     try {
+      setIsLoading(true);
       const res = await handleSignIn(userDetail.email, userDetail.password);
       enqueueSnackbar("Login Successfully", { variant: "success" });
       localStorage.setItem("authToken", res?.jwt);
       Router.push("/notes");
     } catch (error) {
       enqueueSnackbar(error?.message, { variant: "error" });
-      return;
+    } finally {
+      setIsLoading(false);
     }
 
   };
@@ -68,7 +71,7 @@ const Login = () => {
               </div>
               <div className="relative mb-4">
                 <label
-                  htmlFor="message"
+                  htmlFor="password"
                   className="leading-7 text-sm text-gray-600"
                 >
                   Password
@@ -76,15 +79,39 @@ const Login = () => {
                 <input
                   value={userDetail.password}
                   onChange={handleChange}
-                  type="password"
+                  type={isPasswordVisible ? "text" : "password"}
                   id="password"
                   name="password"
                   placeholder="Enter your password"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 pr-10 leading-8 transition-colors duration-200 ease-in-out"
                 />
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordVisible((prev) => !prev)}
+                  aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                  title={isPasswordVisible ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-10 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {isPasswordVisible ? (
+                    // Eye off icon
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-5 0-9.27-3.11-11-8 1.02-2.93 2.98-5.11 5.22-6.39" />
+                      <path d="M1 1l22 22" />
+                      <path d="M9.88 9.88A3 3 0 0 0 12 15a3 3 0 0 0 2.12-.88" />
+                      <path d="M14.12 14.12 9.88 9.88" />
+                      <path d="M21 21A10.94 10.94 0 0 1 23 12c-1.73-4.89-6-8-11-8a11 11 0 0 0-4.12.78" />
+                    </svg>
+                  ) : (
+                    // Eye icon
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  )}
+                </button>
               </div>
-              <button className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-                Login
+              <button disabled={isLoading} type="submit" className={`text-white ${isLoading ? "bg-gray-500" : "bg-indigo-500"} border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg`}>
+                {isLoading ? "Loading..." : "Login"}
               </button>
             </form>
           </div>

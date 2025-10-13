@@ -6,3 +6,7 @@
 html, body, #__next {
   height: 100%;
 }
+
+.common-padding {
+  @apply px-2 sm:px-5;
+}
