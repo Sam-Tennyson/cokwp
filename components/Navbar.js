@@ -6,12 +6,20 @@ import { BiHome } from "react-icons/bi";
 import { TiContacts } from "react-icons/ti";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useSessionStore } from "../stores/session";
+import Router from "next/router";
 
 const Navbar = () => {
   const { handleSignOut } = useSessionStore()
   const isAuthenticated = useSessionStore((state) => state.isAuthenticated)
   const [showHead, setShowHead] = useState("");
   const [showOption, setShowOption] = useState(true);
+
+  const handleSignOutClick = async () => {
+    setShowOption(true);
+    localStorage.setItem("authToken", "")
+    await handleSignOut()
+    Router.push('/')
+  }
 
   return (
     <>
@@ -26,7 +34,6 @@ const Navbar = () => {
           <nav
             className={`md:ml-auto md:flex hidden md:flex-row md:flex-wrap md:items-center `}
           >
-            <BiHome />
             {isAuthenticated && <Link href={"/quiz"}>
               <a
                 className="mr-5 hover:text-gray-900"
@@ -78,11 +85,7 @@ const Navbar = () => {
             ) : (
               <button
                 className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-                onClick={async () => {
-                  setShowOption(true);
-                  localStorage.setItem("authToken", "")
-                  await handleSignOut()
-                }}
+                onClick={handleSignOutClick}
               >
                 Logout
               </button>
@@ -173,12 +176,7 @@ const Navbar = () => {
           ) : (
             <button
               className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-              onClick={async () => {
-                setShowOption(true);
-                localStorage.setItem("authToken", "")
-                await handleSignOut()
-
-              }}
+              onClick={handleSignOutClick}
             >
               Logout
             </button>

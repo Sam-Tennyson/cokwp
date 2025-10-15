@@ -7,6 +7,7 @@ import { useSessionStore } from '../../../stores/session'
 import QuizInstructions from '../../../components/QuizInstructions'
 import QuizQuestion from '../../../components/QuizQuestion'
 import QuizProgress from '../../../components/QuizProgress'
+import AuthGuard from '../../../components/AuthGuard'
 
 const QUIZ_STAGES = {
   LOADING: 'loading',
@@ -74,7 +75,6 @@ const QuizDetail = () => {
   async function handleStartAttempt() {
     if (!userSession?.id || !id) {
       setError('Please sign in to start the quiz')
-      router.push('/login')
       return
     }
     try {
@@ -125,34 +125,39 @@ const QuizDetail = () => {
 
   if (stage === QUIZ_STAGES.LOADING || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-5">
-        <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin" />
-        <div className="text-lg text-gray-600 font-semibold">
-          Loading Quiz...
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-5">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin" />
+          <div className="text-lg text-gray-600 font-semibold">
+            Loading Quiz...
+          </div>
         </div>
-      </div>
+      </AuthGuard>
     )
   }
 
   if (stage === QUIZ_STAGES.INSTRUCTIONS && quiz) {
     return (
-      <div className="min-h-screen ">
-        {error && (
-          <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-800 px-6 py-3 rounded-lg font-semibold z-50 shadow-lg">
-            {error}
-          </div>
-        )}
-        <QuizInstructions 
-          quiz={quiz} 
-          onStart={handleStartAttempt}
-          isStarting={false}
-        />
-      </div>
+      <AuthGuard>
+        <div className="min-h-screen ">
+          {error && (
+            <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-800 px-6 py-3 rounded-lg font-semibold z-50 shadow-lg">
+              {error}
+            </div>
+          )}
+          <QuizInstructions 
+            quiz={quiz} 
+            onStart={handleStartAttempt}
+            isStarting={false}
+          />
+        </div>
+      </AuthGuard>
     )
   }
 
   if (stage === QUIZ_STAGES.ACTIVE && quiz) {
     return (
+      <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-6 px-4 md:px-6 lg:px-8">
         {error && (
           <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-800 px-6 py-3 rounded-lg font-semibold z-50 shadow-lg">
@@ -216,20 +221,23 @@ const QuizDetail = () => {
           </div>
         </div>
       </div>
+      </AuthGuard>
     )
   }
 
   if (stage === QUIZ_STAGES.SUBMITTING) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-6 px-4">
-        <div className="w-20 h-20 border-8 border-gray-200 border-t-green-500 rounded-full animate-spin" />
-        <div className="text-2xl md:text-3xl text-gray-800 font-bold text-center">
-          📝 Submitting Your Quiz...
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-6 px-4">
+          <div className="w-20 h-20 border-8 border-gray-200 border-t-green-500 rounded-full animate-spin" />
+          <div className="text-2xl md:text-3xl text-gray-800 font-bold text-center">
+            📝 Submitting Your Quiz...
+          </div>
+          <div className="text-base md:text-lg text-gray-600 text-center">
+            Please wait while we calculate your score
+          </div>
         </div>
-        <div className="text-base md:text-lg text-gray-600 text-center">
-          Please wait while we calculate your score
-        </div>
-      </div>
+      </AuthGuard>
     )
   }
 

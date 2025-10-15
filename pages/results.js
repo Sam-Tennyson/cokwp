@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { fetchAttemptsByUserId } from '../services/attempts'
 import { useSessionStore } from '../stores/session'
+import AuthGuard from '../components/AuthGuard'
 
 const Results = () => {
   const router = useRouter()
@@ -14,7 +15,6 @@ const Results = () => {
   useEffect(() => {
     async function loadAttempts() {
       if (!userSession?.id) {
-        router.push('/login')
         return
       }
       
@@ -53,17 +53,20 @@ const Results = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-5">
-        <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin" />
-        <div className="text-lg text-gray-600 font-semibold">
-          Loading Your Results...
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-5">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin" />
+          <div className="text-lg text-gray-600 font-semibold">
+            Loading Your Results...
+          </div>
         </div>
-      </div>
+      </AuthGuard>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8 px-4 md:px-6 lg:px-8">
+    <AuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8 px-4 md:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl p-6 md:p-8 mb-8 shadow-lg">
@@ -221,6 +224,7 @@ const Results = () => {
         )}
       </div>
     </div>
+    </AuthGuard>
   )
 }
 

@@ -31,7 +31,7 @@ const Login = () => {
       const res = await handleSignIn(userDetail.email, userDetail.password);
       enqueueSnackbar("Login Successfully", { variant: "success" });
       localStorage.setItem("authToken", res?.jwt);
-      Router.push("/notes");
+      Router.push("/quiz");
     } catch (error) {
       enqueueSnackbar(error?.message, { variant: "error" });
     } finally {

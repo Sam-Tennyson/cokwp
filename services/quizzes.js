@@ -73,3 +73,32 @@ export async function fetchQuizQuestions(quizId) {
   }
   return data
 }
+
+export async function fetchQuizzesWithUserAttempts(userId) {
+  const { data, error } = await supabase
+    .from('quizzes')
+    .select(`
+      *,
+      created_by:profiles (
+        id,
+        first_name,
+        last_name,
+        email
+      ),
+      user_attempts:quiz_attempts!left (
+        id,
+        quiz_id,
+        completed_at,
+        started_at
+      )
+    `)
+    .eq('is_active', true)
+    .eq('user_attempts.user_id', userId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data
+}

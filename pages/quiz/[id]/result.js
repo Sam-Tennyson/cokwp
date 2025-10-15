@@ -5,6 +5,7 @@ import { fetchAttemptById } from '../../../services/attempts'
 import { fetchAnswersByAttemptId } from '../../../services/answers'
 import ResultBadge from '../../../components/ResultBadge'
 import Confetti from '../../../components/Confetti'
+import AuthGuard from '../../../components/AuthGuard'
 
 const QuizResult = () => {
   const router = useRouter()
@@ -40,29 +41,33 @@ const QuizResult = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-5">
-        <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin" />
-        <div className="text-lg text-gray-600 font-semibold">
-          Loading Results...
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center flex-col gap-5">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin" />
+          <div className="text-lg text-gray-600 font-semibold">
+            Loading Results...
+          </div>
         </div>
-      </div>
+      </AuthGuard>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl p-8 shadow-xl max-w-md w-full text-center">
-          <div className="text-6xl mb-4">😕</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops!</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <Link href="/quiz">
-            <a className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
-              Back to Quizzes
-            </a>
-          </Link>
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-8 shadow-xl max-w-md w-full text-center">
+            <div className="text-6xl mb-4">😕</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops!</h2>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <Link href="/quiz">
+              <a className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
+                Back to Quizzes
+              </a>
+            </Link>
+          </div>
         </div>
-      </div>
+      </AuthGuard>
     )
   }
 
@@ -77,7 +82,8 @@ const QuizResult = () => {
   const showConfetti = percentage >= 80
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8 px-4 md:px-6 lg:px-8">
+    <AuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8 px-4 md:px-6 lg:px-8">
       {showConfetti && <Confetti duration={4000} />}
       
       <div className="max-w-4xl mx-auto">
@@ -222,6 +228,7 @@ const QuizResult = () => {
         </div>
       </div>
     </div>
+    </AuthGuard>
   )
 }
 

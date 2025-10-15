@@ -10,6 +10,8 @@ export const useSessionStore = create()(
       (set) => ({
         userSession: null,
         isAuthenticated: false,
+        hasHydrated: false,
+        setHasHydrated: (state) => set({ hasHydrated: state }),
         setSession: (session) => set(() => ({ userSession: session, isAuthenticated: !!session })),
         clearSession: () => set(() => ({ userSession: null, isAuthenticated: false })),
         handleSignIn: async (email, password) => {
@@ -38,6 +40,9 @@ export const useSessionStore = create()(
       }),
       {
         name: 'user-session',
+        onRehydrateStorage: () => (state) => {
+          state?.setHasHydrated(true)
+        },
       }
     ),
   )
