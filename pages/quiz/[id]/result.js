@@ -83,7 +83,7 @@ const QuizResult = () => {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8 px-4 md:px-6 lg:px-8">
+      <div className="min-h-screen  py-8 px-4 md:px-6 lg:px-8">
       {showConfetti && <Confetti duration={4000} />}
       
       <div className="max-w-4xl mx-auto">
@@ -215,11 +215,11 @@ const QuizResult = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-8">
-          <Link href={`/quiz/${id}`}>
+          {/* <Link href={`/quiz/${id}`}>
             <a className="flex-1 min-w-[200px] px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold text-center hover:-translate-y-1 hover:shadow-xl transition-all duration-200">
               🔄 Try Again
             </a>
-          </Link>
+          </Link> */}
           <Link href="/quiz">
             <a className="flex-1 min-w-[200px] px-6 py-4 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl font-bold text-center hover:-translate-y-1 hover:shadow-xl transition-all duration-200">
               📚 More Quizzes
