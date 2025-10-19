@@ -2,7 +2,12 @@ let cachedInstance = null;
 
 async function loadFromNpm(isLive) {
   try {
-    const mod = await import("@cashfreepayments/cashfree-js");
+    // Use eval-based dynamic import so the bundler does not try to
+    // resolve the optional dependency at build time.
+    // This allows deployments without adding the npm SDK while still
+    // preferring it when available.
+    const dynamicImport = (specifier) => eval('import(specifier)');
+    const mod = await dynamicImport("@cashfreepayments/cashfree-js");
     const loader = mod?.load;
     if (typeof loader === "function") {
       return await loader({ mode: isLive ? "production" : "sandbox" });
