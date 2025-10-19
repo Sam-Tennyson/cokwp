@@ -2,6 +2,7 @@
 
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
+import { getCashfreeInstance } from "../services/cashfree-universal-loader";
 
 export default function PaymentStatusPage() {
   const [paymentStatus, setPaymentStatus] = useState("Loading...");
@@ -9,8 +10,7 @@ export default function PaymentStatusPage() {
 
   useEffect(() => {
     const checkStatus = async () => {
-      const { load } = await import("@cashfreepayments/cashfree-js");
-      const cf = await load({ mode: isLive ? "production" : "sandbox" });
+      const cf = await getCashfreeInstance();
       const result = cf.redirectResult?.();
       if (result) {
         if (result.status === "SUCCESS") {

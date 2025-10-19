@@ -32,10 +32,13 @@ export default function PremiumCourses() {
 
   async function handlePayNow(course) {
     setIsLoadingId(course.id);
-    router.push({
-      pathname: "/checkout",
-      query: { courseId: course.id, courseName: course.title, amount: course.amount },
-    });
+    const isAuthenticated = typeof window !== "undefined" && localStorage.getItem("authToken");
+    if (!isAuthenticated) {
+      router.push({ pathname: "/login", query: { returnUrl: `/checkout?courseId=${course.id}&courseName=${encodeURIComponent(course.title)}&amount=${course.amount}` } });
+      setIsLoadingId("");
+      return;
+    }
+    router.push({ pathname: "/checkout", query: { courseId: course.id, courseName: course.title, amount: course.amount } });
   }
 
   return (

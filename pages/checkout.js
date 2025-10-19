@@ -3,6 +3,7 @@
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
+import { getCashfreeInstance } from "../services/cashfree-universal-loader";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -14,8 +15,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const loadCashfree = async () => {
-      const { load } = await import("@cashfreepayments/cashfree-js");
-      const cf = await load({ mode: isLive ? "production" : "sandbox" });
+      const cf = await getCashfreeInstance();
       setCashfree(cf);
     };
     loadCashfree();
