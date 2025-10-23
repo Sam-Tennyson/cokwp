@@ -31,7 +31,9 @@ const Login = () => {
       const res = await handleSignIn(userDetail.email, userDetail.password);
       enqueueSnackbar("Login Successfully", { variant: "success" });
       localStorage.setItem("authToken", res?.jwt);
-      Router.push("/quiz");
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnUrl = urlParams.get("returnUrl");
+      Router.push(returnUrl || "/quiz");
     } catch (error) {
       enqueueSnackbar(error?.message, { variant: "error" });
     } finally {
