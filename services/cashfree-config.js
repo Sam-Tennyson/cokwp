@@ -3,6 +3,8 @@
  * Keep credentials in environment variables. This module only maps endpoints and reads env values.
  */
 
+import { load } from "@cashfreepayments/cashfree-js";
+
 const CASHFREE_ENVIRONMENTS = {
   TEST: {
     baseUrl: "https://sandbox.cashfree.com/pg",
@@ -14,8 +16,8 @@ const CASHFREE_ENVIRONMENTS = {
 
 export function getCashfreeConfig() {
   const env = process.env.NEXT_PUBLIC_CASHFREE_ENV === "LIVE" ? "LIVE" : "TEST";
-  const appId = process.env.CASHFREE_APP_ID || "";
-  const secretKey = process.env.CASHFREE_SECRET_KEY || "";
+  const appId = (process.env.CASHFREE_APP_ID || "").trim();
+  const secretKey = (process.env.CASHFREE_SECRET_KEY || "").trim();
   const config = CASHFREE_ENVIRONMENTS[env];
   return {
     env,
@@ -35,6 +37,14 @@ export function getReturnUrl() {
 export function getNotifyUrl() {
   const host = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   return `${host}/api/cashfree/webhook`;
+}
+
+
+export async function getCashfreeInstance() {
+  const isLive = (process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST") === "LIVE";
+  return await load({
+    mode: isLive ? "production" : "sandbox"
+  });
 }
 
 

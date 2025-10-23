@@ -2,7 +2,7 @@
 
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
-import { getCashfreeInstance } from "../services/cashfree-universal-loader";
+import { getCashfreeInstance } from "../services/cashfree-config";
 
 export default function PaymentStatusPage() {
   const [paymentStatus, setPaymentStatus] = useState("Loading...");

@@ -3,7 +3,7 @@
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import { getCashfreeInstance } from "../services/cashfree-universal-loader";
+import { getCashfreeInstance } from "../services/cashfree-config";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -15,8 +15,12 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const loadCashfree = async () => {
-      const cf = await getCashfreeInstance();
-      setCashfree(cf);
+      try {
+        const cf = await getCashfreeInstance();
+        setCashfree(cf);
+      } catch (err) {
+        console.error("Failed to load Cashfree SDK from npm:", err);
+      }
     };
     loadCashfree();
   }, [isLive]);
@@ -32,7 +36,9 @@ export default function CheckoutPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data?.message || "Failed to create order");
+        const msg = data?.message || data?.details?.message || "Failed to create order";
+        const code = data?.code || data?.details?.code || response.status;
+        throw new Error(`${msg} [${code}]`);
       }
       const paymentSessionId = data?.payment_session_id || data?.order_token;
       if (!paymentSessionId) throw new Error("Missing payment session id");
