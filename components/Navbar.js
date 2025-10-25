@@ -34,14 +34,14 @@ const Navbar = () => {
           <nav
             className={`md:ml-auto md:flex hidden md:flex-row md:flex-wrap md:items-center `}
           >
-            {/* <Link href={"/premium-courses"}>
+            <Link href={"/premium-courses"}>
               <a
                 className="mr-5 hover:text-gray-900"
                 onClick={() => setShowHead("Premium Courses")}
               >
                 Premium Courses
               </a>
-            </Link> */}
+            </Link>
             {isAuthenticated && <Link href={"/quiz"}>
               <a
                 className="mr-5 hover:text-gray-900"
@@ -114,14 +114,14 @@ const Navbar = () => {
       >
         <div className="flex  flex-row mb-3 items-center">
           <BiHome />
-          {/* <Link href={"/premium-courses"}>
+          <Link href={"/premium-courses"}>
             <a
               className="mr-5 hover:text-gray-900"
               onClick={() => setShowOption(true)}
             >
               Premium Courses
             </a>
-          </Link> */}
+          </Link>
           {isAuthenticated && <Link href={"/quiz"}>
             <a
               className="mr-5 hover:text-gray-900"
