@@ -1,13 +1,26 @@
 // Cashfree Webhook endpoint (sandbox/demo)
 // Note: For production, verify webhook signatures per Cashfree docs.
 
+// Disable body parsing to handle raw body if needed for signature verification
+export const config = {
+  api: {
+    bodyParser: true,
+    externalResolver: true,
+  },
+};
+
 export default async function handler(req, res) {
+  // CRITICAL: Log request details to debug 308 redirect issue
+  console.log("[Cashfree Webhook] === WEBHOOK REQUEST RECEIVED ===");
+  console.log("[Cashfree Webhook] Method:", req.method);
+  console.log("[Cashfree Webhook] URL:", req.url);
+  console.log("[Cashfree Webhook] Host:", req.headers.host);
+  console.log("[Cashfree Webhook] User-Agent:", req.headers['user-agent']);
+  console.log("[Cashfree Webhook] Content-Type:", req.headers['content-type']);
+  
   // Log all incoming requests for debugging
-  console.log("[Cashfree Webhook] Received request:", {
-    method: req.method,
-    headers: req.headers,
-    query: req.query,
-  });
+  console.log("[Cashfree Webhook] Full headers:", req.headers);
+  console.log("[Cashfree Webhook] Query params:", req.query);
 
   if (req.method !== "POST") {
     console.log("[Cashfree Webhook] Method not allowed:", req.method);

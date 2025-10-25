@@ -47,6 +47,14 @@ export default async function handler(req, res) {
     }
 
     const orderId = `order_${courseId}_${Date.now()}`;
+    const returnUrl = getReturnUrl();
+    const notifyUrl = getNotifyUrl();
+    
+    // CRITICAL: Log URLs being sent to Cashfree
+    console.log("[Cashfree][create-order] NEXT_PUBLIC_APP_URL=", process.env.NEXT_PUBLIC_APP_URL);
+    console.log("[Cashfree][create-order] Return URL:", returnUrl);
+    console.log("[Cashfree][create-order] Notify/Webhook URL:", notifyUrl);
+    
     const payload = {
       order_id: orderId,
       order_amount: Number(amount),
@@ -57,8 +65,8 @@ export default async function handler(req, res) {
         customer_phone: "9999999999",
       },
       order_meta: {
-        return_url: getReturnUrl(),
-        notify_url: getNotifyUrl(),
+        return_url: returnUrl,
+        notify_url: notifyUrl,
       },
     };
 
@@ -66,9 +74,9 @@ export default async function handler(req, res) {
     if (courseName) {
       payload.order_note = `Payment for ${courseName}`;
     }
-
-    // Log webhook URL for debugging
-    console.log("[Cashfree][create-order] Webhook URL:", getNotifyUrl());
+    
+    // Log the complete payload being sent
+    console.log("[Cashfree][create-order] Complete payload:", JSON.stringify(payload, null, 2));
 
     const response = await fetch(cfg.endpoints.createOrder, {
       method: "POST",
@@ -84,6 +92,7 @@ export default async function handler(req, res) {
     const data = await response.json();
     if (!response.ok) {
       const errorMessage = data?.message || data?.reason || data?.error || "Cashfree error";
+      console.error("[Cashfree][create-order] Error response:", JSON.stringify(data, null, 2));
       res.status(response.status).json({
         message: errorMessage,
         code: data?.code || data?.sub_code,
@@ -93,7 +102,11 @@ export default async function handler(req, res) {
       return;
     }
 
-    console.log("data", data);
+    console.log("[Cashfree][create-order] ✅ Order created successfully!");
+    console.log("[Cashfree][create-order] Order ID:", data.order_id);
+    console.log("[Cashfree][create-order] Payment Session ID:", data.payment_session_id);
+    console.log("[Cashfree][create-order] Order Status:", data.order_status);
+    console.log("[Cashfree][create-order] Complete response:", JSON.stringify(data, null, 2));
 
     res.status(200).json(data);
   } catch (err) {

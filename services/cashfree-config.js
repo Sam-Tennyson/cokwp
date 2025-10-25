@@ -43,13 +43,22 @@ export function getCashfreeConfig() {
 }
 
 export function getReturnUrl() {
-  const host = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  return `${host}/payment-status?order_id={order_id}`;
+  const host = process.env.NEXT_PUBLIC_APP_URL;
+  if (!host) {
+    console.error("[Cashfree Config] WARNING: NEXT_PUBLIC_APP_URL not set! Using localhost fallback.");
+  }
+  const finalHost = host || "http://localhost:3000";
+  return `${finalHost}/payment-status?order_id={order_id}`;
 }
 
 export function getNotifyUrl() {
-  const host = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  return `${host}/api/cashfree/webhook`;
+  const host = process.env.NEXT_PUBLIC_APP_URL;
+  if (!host) {
+    console.error("[Cashfree Config] CRITICAL: NEXT_PUBLIC_APP_URL not set! Webhook will NOT work in production!");
+  }
+  const finalHost = host || "http://localhost:3000";
+  // IMPORTANT: Trailing slash required because next.config.js has trailingSlash: true
+  return `${finalHost}/api/cashfree/webhook/`;
 }
 
 
