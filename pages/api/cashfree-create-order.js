@@ -14,18 +14,35 @@ export default async function handler(req, res) {
     }
 
     const cfg = getCashfreeConfig();
-    // Minimal diagnostic logs for local debugging
+    
+    // Diagnostic logs for debugging
     try {
       console.log("[Cashfree][create-order] env=", cfg.env, "endpoint=", cfg.endpoints.createOrder);
+      console.log("[Cashfree][create-order] NODE_ENV=", process.env.NODE_ENV);
+      console.log("[Cashfree][create-order] NEXT_PUBLIC_CASHFREE_ENV=", process.env.NEXT_PUBLIC_CASHFREE_ENV);
+      
       if (cfg.appId) {
         console.log("[Cashfree][create-order] appId length=", cfg.appId.length, "prefix=", cfg.appId.slice(0, 6));
+      } else {
+        console.log("[Cashfree][create-order] WARNING: appId not found. Checked env vars: CASHFREE_" + cfg.env + "_APP_ID, CASHFREE_APP_ID");
       }
+      
       if (cfg.secretKey) {
         console.log("[Cashfree][create-order] secretKey length=", cfg.secretKey.length);
+      } else {
+        console.log("[Cashfree][create-order] WARNING: secretKey not found. Checked env vars: CASHFREE_" + cfg.env + "_SECRET_KEY, CASHFREE_SECRET_KEY");
       }
-    } catch (_) {}
+    } catch (err) {
+      console.error("[Cashfree][create-order] Logging error:", err);
+    }
+    
     if (!cfg.appId || !cfg.secretKey) {
-      res.status(500).json({ message: "Cashfree credentials not configured" });
+      res.status(500).json({ 
+        message: "Cashfree credentials not configured", 
+        env: cfg.env,
+        nodeEnv: process.env.NODE_ENV,
+        hint: `Set CASHFREE_${cfg.env}_APP_ID and CASHFREE_${cfg.env}_SECRET_KEY or CASHFREE_APP_ID and CASHFREE_SECRET_KEY`
+      });
       return;
     }
 

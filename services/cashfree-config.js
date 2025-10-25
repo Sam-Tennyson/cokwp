@@ -15,10 +15,23 @@ const CASHFREE_ENVIRONMENTS = {
 };
 
 export function getCashfreeConfig() {
-  const env = process.env.NEXT_PUBLIC_CASHFREE_ENV === "LIVE" ? "LIVE" : "TEST";
-  const appId = (process.env.CASHFREE_APP_ID || "").trim();
-  const secretKey = (process.env.CASHFREE_SECRET_KEY || "").trim();
+  // Read environment - defaults to TEST if not explicitly set to LIVE
+  const envVar = process.env.NEXT_PUBLIC_CASHFREE_ENV || "";
+  const env = envVar.toUpperCase() === "LIVE" ? "LIVE" : "TEST";
+  
+  // Read credentials - use env-specific variables if available, fallback to generic
+  const appId = (
+    process.env.CASHFREE_APP_ID ||
+    ""
+  ).trim();
+  
+  const secretKey = (
+    process.env.CASHFREE_SECRET_KEY ||
+    ""
+  ).trim();
+  
   const config = CASHFREE_ENVIRONMENTS[env];
+  
   return {
     env,
     appId,
