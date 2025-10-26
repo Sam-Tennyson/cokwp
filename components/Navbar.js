@@ -6,11 +6,14 @@ import { BiHome } from "react-icons/bi";
 import { TiContacts } from "react-icons/ti";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useSessionStore } from "../stores/session";
+import { useProfileStore } from "../stores/profile";
 import Router from "next/router";
 
 const Navbar = () => {
   const { handleSignOut } = useSessionStore()
   const isAuthenticated = useSessionStore((state) => state.isAuthenticated)
+  const profile = useProfileStore((state) => state.profile)
+  const isAdmin = useProfileStore((state) => state.isAdmin)
   const [showHead, setShowHead] = useState("");
   const [showOption, setShowOption] = useState(true);
 
@@ -34,14 +37,14 @@ const Navbar = () => {
           <nav
             className={`md:ml-auto md:flex hidden md:flex-row md:flex-wrap md:items-center `}
           >
-            <Link href={"/premium-courses"}>
+            {/* <Link href={"/premium-courses"}>
               <a
                 className="mr-5 hover:text-gray-900"
                 onClick={() => setShowHead("Premium Courses")}
               >
                 Premium Courses
               </a>
-            </Link>
+            </Link> */}
             {isAuthenticated && <Link href={"/quiz"}>
               <a
                 className="mr-5 hover:text-gray-900"
@@ -91,12 +94,37 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              <button
-                className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-                onClick={handleSignOutClick}
-              >
-                Logout
-              </button>
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col items-end">
+                  <span className="text-sm font-medium text-gray-900">
+                    {profile?.first_name && profile?.last_name
+                      ? `${profile.first_name} ${profile.last_name}`
+                      : profile?.email || "User"}
+                  </span>
+                  {isAdmin && (
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                      Admin
+                    </span>
+                  )}
+                </div>
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
+                    {profile?.first_name?.[0]?.toUpperCase() || profile?.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                )}
+                <button
+                  className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
+                  onClick={handleSignOutClick}
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </nav>
 
@@ -114,14 +142,14 @@ const Navbar = () => {
       >
         <div className="flex  flex-row mb-3 items-center">
           <BiHome />
-          <Link href={"/premium-courses"}>
+          {/* <Link href={"/premium-courses"}>
             <a
               className="mr-5 hover:text-gray-900"
               onClick={() => setShowOption(true)}
             >
               Premium Courses
             </a>
-          </Link>
+          </Link> */}
           {isAuthenticated && <Link href={"/quiz"}>
             <a
               className="mr-5 hover:text-gray-900"
@@ -190,12 +218,42 @@ const Navbar = () => {
               </Link>
             </>
           ) : (
-            <button
-              className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-              onClick={handleSignOutClick}
-            >
-              Logout
-            </button>
+            <div className="flex flex-col w-full gap-3">
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium">
+                    {profile?.first_name?.[0]?.toUpperCase() || profile?.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                )}
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">
+                    {profile?.first_name && profile?.last_name
+                      ? `${profile.first_name} ${profile.last_name}`
+                      : profile?.email || "User"}
+                  </div>
+                  {profile?.email && profile?.first_name && (
+                    <div className="text-xs text-gray-500">{profile.email}</div>
+                  )}
+                  {isAdmin && (
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded mt-1 inline-block">
+                      Admin
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                className="inline-flex items-center justify-center bg-blue-500 border-0 py-2 px-4 focus:outline-none hover:bg-gray-700 rounded text-white w-full"
+                onClick={handleSignOutClick}
+              >
+                Logout
+              </button>
+            </div>
           )}
         </div>
 

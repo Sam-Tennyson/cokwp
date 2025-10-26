@@ -4,9 +4,13 @@ import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { getCashfreeInstance } from "../services/cashfree-config";
+import { useSessionStore } from "../stores/session";
+import { useProfileStore } from "../stores/profile";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { userSession } = useSessionStore();
+  const profile = useProfileStore((state) => state.profile);
   const { courseId, courseName, amount } = router.query || {};
   const [cashfree, setCashfree] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,10 +33,17 @@ export default function CheckoutPage() {
     if (!cashfree) return;
     setIsLoading(true);
     try {
+      const payload = {
+        courseId,
+        // courseName,
+        // amount,
+        userId: userSession.id,
+      }
       const response = await fetch("/api/cashfree-create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId, courseName, amount }),
+        // body: JSON.stringify({ courseId, courseName, amount }),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -55,13 +66,56 @@ export default function CheckoutPage() {
       <Head>
         <title>Checkout</title>
       </Head>
-      <div>
-        <h1 className="text-xl font-semibold mb-2">Complete Your Purchase</h1>
-        <p className="text-gray-700 mb-4">{courseName} — ₹{amount}</p>
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-2xl font-semibold mb-6">Complete Your Purchase</h1>
+        
+        {/* User Profile Info */}
+        {profile && (
+          <div className="bg-white border rounded-lg p-4 mb-6 shadow-sm">
+            <h2 className="text-sm font-medium text-gray-500 mb-3">Account Information</h2>
+            <div className="flex items-center gap-4">
+              {profile.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center text-lg font-medium">
+                  {profile.first_name?.[0]?.toUpperCase() || profile.email?.[0]?.toUpperCase() || "U"}
+                </div>
+              )}
+              <div>
+                <div className="font-medium text-gray-900">
+                  {profile.first_name && profile.last_name
+                    ? `${profile.first_name} ${profile.last_name}`
+                    : "User"}
+                </div>
+                <div className="text-sm text-gray-600">{profile.email}</div>
+                {profile.phone && (
+                  <div className="text-sm text-gray-600">{profile.phone}</div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Course Info */}
+        <div className="bg-white border rounded-lg p-4 mb-6 shadow-sm">
+          <h2 className="text-sm font-medium text-gray-500 mb-3">Course Details</h2>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="font-medium text-gray-900">{courseName}</p>
+              <p className="text-sm text-gray-500">Premium Course</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">₹{amount}</p>
+          </div>
+        </div>
+
         <button
           onClick={handlePayment}
           disabled={!cashfree || isLoading}
-          className="inline-flex text-white bg-blue-500 border-0 py-2 px-4 focus:outline-none hover:bg-blue-600 rounded"
+          className="w-full inline-flex justify-center text-white bg-blue-500 border-0 py-3 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Redirecting..." : "Pay Now"}
         </button>

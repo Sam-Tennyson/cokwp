@@ -1,13 +1,25 @@
 import Head from "next/head";
 import Script from "next/script";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import "../styles/globals.css";
 import { SnackbarProvider } from "notistack";
+import { useSessionStore } from "../stores/session";
+import { useProfileStore } from "../stores/profile";
 
 function MyApp({ Component, pageProps }) {
   const [foot, setFoot] = useState("");
+  const userSession = useSessionStore((state) => state.userSession);
+  const hasHydrated = useSessionStore((state) => state.hasHydrated);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
+
+  useEffect(() => {
+    if (hasHydrated && userSession?.id) {
+      fetchProfile(userSession.id);
+    }
+  }, [hasHydrated, userSession?.id, fetchProfile]);
+
   return (
     <>
       {/* <PersistGate persistor={persistor}> */}

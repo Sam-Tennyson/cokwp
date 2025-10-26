@@ -101,9 +101,11 @@ export default function Home(props) {
                   More Videos
                 </button>
                 </Link>
-                <button className="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg" onClick={handleOpenModal}>
-                  Blogs
+                <Link href={"/quiz"}>
+                <button className="ml-4 inline-flex text-white bg-gradient-to-r from-purple-500 to-pink-500 border-0 py-2 px-6 focus:outline-none hover:from-purple-600 hover:to-pink-600 rounded text-lg shadow-lg transform hover:scale-105 transition-all duration-200">
+                  🎯 Test Your Knowledge
                 </button>
+                </Link>
               </div>
             </div>
             <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">

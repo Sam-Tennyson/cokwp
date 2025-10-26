@@ -4,6 +4,7 @@ import { fetchQuizById, fetchQuizQuestions } from '../../../services/quizzes'
 import { createQuizAttempt, completeQuizAttempt } from '../../../services/attempts'
 import { createAnswersBatch, calculateAttemptScore } from '../../../services/answers'
 import { useSessionStore } from '../../../stores/session'
+import { useProfileStore } from '../../../stores/profile'
 import QuizInstructions from '../../../components/QuizInstructions'
 import QuizQuestion from '../../../components/QuizQuestion'
 import QuizProgress from '../../../components/QuizProgress'
@@ -27,6 +28,8 @@ const QuizDetail = () => {
   const [attempt, setAttempt] = useState(null)
   const [stage, setStage] = useState(QUIZ_STAGES.LOADING)
   const userSession = useSessionStore((s) => s.userSession)
+  const profile = useProfileStore((state) => state.profile)
+  const isAdmin = useProfileStore((state) => state.isAdmin)
 
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers])
 
@@ -168,13 +171,46 @@ const QuizDetail = () => {
         <div className="max-w-4xl mx-auto">
           {/* Quiz Header */}
           <div className="bg-white rounded-2xl p-6 md:p-8 mb-6 shadow-lg">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-              {quiz.title}
-            </h1>
-            {quiz.created_by && (
-              <p className="text-sm text-gray-500">
-                By {quiz.created_by.first_name} {quiz.created_by.last_name}
-              </p>
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex-1">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                  {quiz.title}
+                </h1>
+                {quiz.created_by && (
+                  <p className="text-sm text-gray-500">
+                    By {quiz.created_by.first_name} {quiz.created_by.last_name}
+                  </p>
+                )}
+              </div>
+              {profile && (
+                <div className="flex items-center gap-2">
+                  {profile.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium">
+                      {profile.first_name?.[0]?.toUpperCase() || profile.email?.[0]?.toUpperCase() || "U"}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {profile && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span>
+                  {profile.first_name && profile.last_name
+                    ? `${profile.first_name} ${profile.last_name}`
+                    : profile.email || "User"}
+                </span>
+                {isAdmin && (
+                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                    Admin
+                  </span>
+                )}
+              </div>
             )}
           </div>
 

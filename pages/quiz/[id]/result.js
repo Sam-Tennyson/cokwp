@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { fetchAttemptById } from '../../../services/attempts'
 import { fetchAnswersByAttemptId } from '../../../services/answers'
+import { useProfileStore } from '../../../stores/profile'
 import ResultBadge from '../../../components/ResultBadge'
 import Confetti from '../../../components/Confetti'
 import AuthGuard from '../../../components/AuthGuard'
@@ -14,6 +15,8 @@ const QuizResult = () => {
   const [answers, setAnswers] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const profile = useProfileStore((state) => state.profile)
+  const isAdmin = useProfileStore((state) => state.isAdmin)
 
   useEffect(() => {
     async function loadResultData() {
@@ -99,6 +102,37 @@ const QuizResult = () => {
 
         {/* Quiz Title */}
         <div className="bg-white rounded-2xl p-6 md:p-8 mb-6 shadow-lg text-center">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            {profile && (
+              <>
+                {profile.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Profile"
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium">
+                    {profile.first_name?.[0]?.toUpperCase() || profile.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          {profile && (
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <span className="text-gray-600">
+                {profile.first_name && profile.last_name
+                  ? `${profile.first_name} ${profile.last_name}`
+                  : profile.email || "User"}
+              </span>
+              {isAdmin && (
+                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                  Admin
+                </span>
+              )}
+            </div>
+          )}
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
             {quiz?.title || 'Quiz Results'}
           </h1>
