@@ -60,15 +60,22 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
 
     // Try different signature formats that Cashfree might use
     // In your current verifyWebhookSignature function, replace the formats array with:
+    // const formats = [
+    //   {
+    //     name: "timestamp(seconds) + rawBody",
+    //     value: Math.floor(parseInt(timestamp) / 1000).toString() + rawBody
+    //   },
+    //   {
+    //     name: "timestamp(milliseconds) + rawBody",
+    //     value: timestamp + rawBody
+    //   },
+    // ];
+
     const formats = [
       {
-        name: "timestamp(seconds) + rawBody",
-        value: Math.floor(parseInt(timestamp) / 1000).toString() + rawBody
-      },
-      {
-        name: "timestamp(milliseconds) + rawBody",
-        value: timestamp + rawBody
-      },
+        name: "timestamp + rawBody (correct format)",
+        value: timestamp + rawBody  // No conversion needed
+      }
     ];
 
     console.log("[Webhook] 🧪 Testing different signature formats:");
@@ -247,19 +254,12 @@ export default async function handler(req, res) {
     console.log("[Webhook] ├─ Timestamp:", timestamp ? timestamp : "Missing");
     console.log("[Webhook] └─ Secret Configured:", process.env.CASHFREE_WEBHOOK_SECRET ? "Yes" : "No");
 
-    // TEMPORARY: Skip signature verification for debugging
-
-    // TODO: Re-enable after confirming correct webhook secret and format
-    console.warn("[Webhook] ⚠️⚠️⚠️ SIGNATURE VERIFICATION TEMPORARILY DISABLED ⚠️⚠️⚠️");
-    console.warn("[Webhook] This is INSECURE and should be fixed ASAP!");
-
     // Always verify signature if headers are present
     if (signature && timestamp) {
       const isValid = verifyWebhookSignature(rawBody, signature, timestamp);
 
       if (!isValid) {
         console.error("[Webhook] ⚠️ Invalid webhook signature - but continuing anyway (TEMPORARY)");
-        // TEMPORARILY commenting out the rejection to test webhook processing
         return res.status(401).json({ 
           success: false,
           message: "Invalid webhook signature" 
