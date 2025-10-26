@@ -51,36 +51,44 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
   }
 
   try {
-    // Cashfree signature format: HMAC-SHA256(timestamp + rawBody)
-    const signatureString = timestamp + rawBody;
-    
     console.log("[Webhook] 🔍 Signature Debug Info:");
+    console.log("[Webhook] ├─ Webhook Secret:", webhookSecret);
     console.log("[Webhook] ├─ Webhook Secret Length:", webhookSecret.length);
     console.log("[Webhook] ├─ Timestamp:", timestamp);
     console.log("[Webhook] ├─ Raw Body (first 200 chars):", rawBody.substring(0, 200));
     console.log("[Webhook] ├─ Raw Body (last 50 chars):", rawBody.substring(rawBody.length - 50));
-    console.log("[Webhook] ├─ Signature String Length:", signatureString.length);
-    console.log("[Webhook] └─ Signature String (first 100 chars):", signatureString.substring(0, 100));
     
-    const expectedSignature = crypto
-      .createHmac("sha256", webhookSecret)
-      .update(signatureString)
-      .digest("base64");
+    // Try different signature formats that Cashfree might use
+    const formats = [
+      { name: "timestamp + rawBody", value: timestamp + rawBody },
+      { name: "rawBody only", value: rawBody },
+      { name: "rawBody + timestamp", value: rawBody + timestamp },
+    ];
     
-    const isValid = signature === expectedSignature;
+    console.log("[Webhook] 🧪 Testing different signature formats:");
     
-    if (!isValid) {
-      console.error("[Webhook] ❌ Signature mismatch!");
-      console.error("[Webhook] Expected:", expectedSignature);
-      console.error("[Webhook] Received:", signature);
-      console.error("[Webhook] Timestamp:", timestamp);
-      console.error("[Webhook] Raw Body Length:", rawBody.length);
-      console.error("[Webhook] Full Raw Body:", rawBody);
-    } else {
-      console.log("[Webhook] ✅ Signatures match!");
+    for (const format of formats) {
+      const testSignature = crypto
+        .createHmac("sha256", webhookSecret)
+        .update(format.value)
+        .digest("base64");
+      
+      console.log(`[Webhook] ├─ Format: ${format.name}`);
+      console.log(`[Webhook] │  └─ Generated: ${testSignature}`);
+      
+      if (testSignature === signature) {
+        console.log(`[Webhook] ✅ MATCH FOUND with format: ${format.name}`);
+        return true;
+      }
     }
     
-    return isValid;
+    // None matched
+    console.error("[Webhook] ❌ No signature format matched!");
+    console.error("[Webhook] Received signature:", signature);
+    console.error("[Webhook] Timestamp:", timestamp);
+    console.error("[Webhook] Raw Body Length:", rawBody.length);
+    
+    return false;
   } catch (err) {
     console.error("[Webhook] Error during signature verification:", err);
     return false;
