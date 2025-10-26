@@ -53,6 +53,15 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
   try {
     // Cashfree signature format: HMAC-SHA256(timestamp + rawBody)
     const signatureString = timestamp + rawBody;
+    
+    console.log("[Webhook] 🔍 Signature Debug Info:");
+    console.log("[Webhook] ├─ Webhook Secret Length:", webhookSecret.length);
+    console.log("[Webhook] ├─ Timestamp:", timestamp);
+    console.log("[Webhook] ├─ Raw Body (first 200 chars):", rawBody.substring(0, 200));
+    console.log("[Webhook] ├─ Raw Body (last 50 chars):", rawBody.substring(rawBody.length - 50));
+    console.log("[Webhook] ├─ Signature String Length:", signatureString.length);
+    console.log("[Webhook] └─ Signature String (first 100 chars):", signatureString.substring(0, 100));
+    
     const expectedSignature = crypto
       .createHmac("sha256", webhookSecret)
       .update(signatureString)
@@ -66,6 +75,9 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
       console.error("[Webhook] Received:", signature);
       console.error("[Webhook] Timestamp:", timestamp);
       console.error("[Webhook] Raw Body Length:", rawBody.length);
+      console.error("[Webhook] Full Raw Body:", rawBody);
+    } else {
+      console.log("[Webhook] ✅ Signatures match!");
     }
     
     return isValid;
@@ -203,9 +215,17 @@ export default async function handler(req, res) {
     const rawBody = await getRawBody(req);
     console.log("[Webhook] 📦 Raw Body Length:", rawBody.length);
     
-    // Extract signature headers
-    const signature = req.headers["x-webhook-signature"];
-    const timestamp = req.headers["x-webhook-timestamp"];
+    // Log all headers to debug
+    console.log("[Webhook] 📋 All Request Headers:");
+    Object.keys(req.headers).forEach(key => {
+      if (key.toLowerCase().includes('webhook') || key.toLowerCase().includes('signature') || key.toLowerCase().includes('timestamp')) {
+        console.log(`[Webhook] ├─ ${key}: ${req.headers[key]}`);
+      }
+    });
+    
+    // Extract signature headers (try both casings)
+    const signature = req.headers["x-webhook-signature"] || req.headers["X-Webhook-Signature"];
+    const timestamp = req.headers["x-webhook-timestamp"] || req.headers["X-Webhook-Timestamp"];
     
     console.log("[Webhook] 🔐 Verifying webhook signature...");
     console.log("[Webhook] ├─ Environment:", process.env.NODE_ENV || "development");
