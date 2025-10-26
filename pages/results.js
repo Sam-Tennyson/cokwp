@@ -3,11 +3,14 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { fetchAttemptsByUserId } from '../services/attempts'
 import { useSessionStore } from '../stores/session'
+import { useProfileStore } from '../stores/profile'
 import AuthGuard from '../components/AuthGuard'
 
 const Results = () => {
   const router = useRouter()
   const userSession = useSessionStore((s) => s.userSession)
+  const profile = useProfileStore((state) => state.profile)
+  const isAdmin = useProfileStore((state) => state.isAdmin)
   const [attempts, setAttempts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -71,13 +74,41 @@ const Results = () => {
         {/* Header */}
         <div className="bg-white rounded-2xl p-6 md:p-8 mb-8 shadow-lg">
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-                📊 My Results
-              </h1>
-              <p className="text-gray-600">
-                Track your quiz performance and progress
-              </p>
+            <div className="flex items-center gap-4">
+              {profile && (
+                <>
+                  {profile.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt="Profile"
+                      className="w-14 h-14 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl font-medium">
+                      {profile.first_name?.[0]?.toUpperCase() || profile.email?.[0]?.toUpperCase() || "U"}
+                    </div>
+                  )}
+                </>
+              )}
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
+                  📊 My Results
+                </h1>
+                {profile && (
+                  <div className="flex items-center gap-2">
+                    <p className="text-gray-600">
+                      {profile.first_name && profile.last_name
+                        ? `${profile.first_name} ${profile.last_name}`
+                        : profile.email || "User"}
+                    </p>
+                    {isAdmin && (
+                      <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
             <Link href="/quiz">
               <a className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-semibold hover:-translate-y-1 hover:shadow-xl transition-all duration-200">
