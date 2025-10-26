@@ -325,6 +325,7 @@
 
 /// pages/api/cashfree/webhook.js
 import crypto from 'crypto';
+import { supabase } from '../../../services/supabase';
 
 // Disable body parsing to get raw body for signature verification
 export const config = {
@@ -335,16 +336,20 @@ export const config = {
 
 /**
  * Read raw body from request
+ * IMPORTANT: Must preserve exact format to avoid decimal conversion (499.00 → 499)
  */
 function getRawBody(req) {
-  return new Promise((resolve) => {
-    let data = '';
+  return new Promise((resolve, reject) => {
+    const chunks = [];
     req.on('data', chunk => {
-      data += chunk;
+      chunks.push(chunk);
     });
     req.on('end', () => {
-      resolve(data);
+      // Use Buffer.concat to preserve exact bytes, then convert to UTF-8
+      const buffer = Buffer.concat(chunks);
+      resolve(buffer.toString('utf8'));
     });
+    req.on('error', reject);
   });
 }
 
@@ -354,28 +359,41 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Get raw body
+    // Get raw body (preserves decimal format like 499.00)
     const rawBody = await getRawBody(req);
     
-    // Get signature from header
+    // Get signature and timestamp from headers
     const signature = req.headers['x-webhook-signature'];
+    const timestamp = req.headers['x-webhook-timestamp'];
     
-    // Verify signature using the raw body (not stringified)
+    console.log('[Webhook] Signature verification:', {
+      signaturePresent: !!signature,
+      timestampPresent: !!timestamp,
+      rawBodyLength: rawBody.length,
+      secretConfigured: !!process.env.CASHFREE_WEBHOOK_SECRET
+    });
+    
+    // Verify signature using timestamp + rawBody (Cashfree format)
+    // IMPORTANT: rawBody must be in raw text format to preserve decimals (499.00 not 499)
+    const signaturePayload = timestamp + rawBody;
     const expectedSignature = crypto
       .createHmac('sha256', process.env.CASHFREE_WEBHOOK_SECRET)
-      .update(rawBody)
+      .update(signaturePayload)
       .digest('base64');
 
-    console.log('Signature verification:', {
+    console.log('[Webhook] Signature comparison:', {
       received: signature,
       expected: expectedSignature,
-      match: signature === expectedSignature
+      match: signature === expectedSignature,
+      timestamp: timestamp
     });
 
     if (signature !== expectedSignature) {
-      console.error('Invalid webhook signature');
+      console.error('[Webhook] ❌ Invalid webhook signature!');
       return res.status(401).json({ error: 'Invalid signature' });
     }
+    
+    console.log('[Webhook] ✅ Signature verified successfully');
 
     // Parse the raw body to JSON
     const webhookData = JSON.parse(rawBody);
@@ -391,13 +409,17 @@ export default async function handler(req, res) {
       case 'PAYMENT_FAILED_WEBHOOK':
         await handlePaymentFailure(webhookData);
         break;
+
+      case 'PAYMENT_CHARGES_WEBHOOK':
+        await handlePaymentCharges(webhookData);
+        break;
         
       case 'REFUND_SUCCESS_WEBHOOK':
         await handleRefundSuccess(webhookData);
         break;
-        
+
       default:
-        console.log('Unhandled webhook event:', webhookData.type);
+        console.log('[Webhook] ℹ️ Unhandled webhook event:', webhookData.type);
     }
 
     res.status(200).json({ received: true });
@@ -410,32 +432,128 @@ export default async function handler(req, res) {
 async function handlePaymentSuccess(data) {
   const order = data.data?.order || {};
   const payment = data.data?.payment || {};
+  const charges = data.data?.charges_details || {};
   
-  console.log('Payment Success:', {
+  console.log('[Webhook] Processing Payment Success:', {
     orderId: order.order_id,
     amount: order.order_amount,
     paymentId: payment.cf_payment_id,
-    paymentMethod: payment.payment_method
+    paymentMethod: payment.payment_group
   });
   
-  // TODO: Update your database here
-  // Update order status to success
-  // Send confirmation email
-  // Grant course access, etc.
+  try {
+    // Update purchase status in Supabase
+    const { data: updateData, error } = await supabase
+      .from('purchases')
+      .update({
+        payment_status: 'success',
+        cashfree_payment_id: payment.cf_payment_id?.toString(),
+        payment_method: payment.payment_group,
+        payment_completed_at: payment.payment_time,
+        settlement_amount: charges.settlement_amount,
+        service_charge: charges.service_charge,
+        bank_reference: payment.bank_reference,
+        updated_at: new Date().toISOString()
+      })
+      .eq('transaction_id', order.order_id)
+      .select();
+    
+    if (error) {
+      console.error('[Webhook] Error updating purchase:', error);
+      throw error;
+    }
+    
+    if (!updateData || updateData.length === 0) {
+      console.error('[Webhook] No purchase record found for order:', order.order_id);
+      return;
+    }
+    
+    console.log('[Webhook] ✅ Purchase updated successfully:', updateData[0]);
+    
+    // TODO: Send confirmation email
+    // TODO: Grant course access
+    
+  } catch (error) {
+    console.error('[Webhook] Error in handlePaymentSuccess:', error);
+    throw error;
+  }
 }
 
 async function handlePaymentFailure(data) {
   const order = data.data?.order || {};
   const payment = data.data?.payment || {};
   
-  console.log('Payment Failed:', {
+  console.log('[Webhook] Processing Payment Failure:', {
     orderId: order.order_id,
     error: payment.payment_message,
     errorCode: payment.payment_code
   });
   
-  // TODO: Update order status to failed
-  // Notify customer, etc.
+  try {
+    // Update purchase status in Supabase
+    const { data: updateData, error } = await supabase
+      .from('purchases')
+      .update({
+        payment_status: 'failed',
+        failure_reason: payment.payment_message,
+        updated_at: new Date().toISOString()
+      })
+      .eq('transaction_id', order.order_id)
+      .select();
+    
+    if (error) {
+      console.error('[Webhook] Error updating purchase:', error);
+      throw error;
+    }
+    
+    console.log('[Webhook] ✅ Purchase marked as failed:', updateData);
+    
+    // TODO: Notify customer about payment failure
+    
+  } catch (error) {
+    console.error('[Webhook] Error in handlePaymentFailure:', error);
+    throw error;
+  }
+}
+
+async function handlePaymentCharges(data) {
+  const order = data.data?.order || {};
+  const payment = data.data?.payment || {};
+  const charges = data.data?.charges_details || {};
+  
+  console.log('[Webhook] Processing Payment Charges:', {
+    orderId: order.order_id,
+    serviceCharge: charges.service_charge,
+    settlementAmount: charges.settlement_amount
+  });
+  
+  try {
+    // Update charges info in Supabase (if payment is already successful)
+    if (payment.payment_status === 'SUCCESS') {
+      const { data: updateData, error } = await supabase
+        .from('purchases')
+        .update({
+          settlement_amount: charges.settlement_amount,
+          service_charge: charges.service_charge,
+          updated_at: new Date().toISOString()
+        })
+        .eq('transaction_id', order.order_id)
+        .select();
+      
+      if (error) {
+        console.error('[Webhook] Error updating charges:', error);
+        throw error;
+      }
+      
+      console.log('[Webhook] ✅ Charges updated:', updateData);
+    } else {
+      console.log('[Webhook] ℹ️ Payment not successful yet, charges webhook received');
+    }
+    
+  } catch (error) {
+    console.error('[Webhook] Error in handlePaymentCharges:', error);
+    throw error;
+  }
 }
 
 async function handleRefundSuccess(data) {
