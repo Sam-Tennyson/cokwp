@@ -335,19 +335,17 @@ export const config = {
 };
 
 /**
- * Read raw body from request
- * IMPORTANT: Must preserve exact format to avoid decimal conversion (499.00 → 499)
+ * Read raw body from request as Buffer (exact bytes)
+ * IMPORTANT: Do NOT stringify before signature verification.
  */
 function getRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
-    req.on('data', chunk => {
+    req.on('data', (chunk) => {
       chunks.push(chunk);
     });
     req.on('end', () => {
-      // Use Buffer.concat to preserve exact bytes, then convert to UTF-8
-      const buffer = Buffer.concat(chunks);
-      resolve(buffer.toString('utf8'));
+      resolve(Buffer.concat(chunks));
     });
     req.on('error', reject);
   });
@@ -359,8 +357,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Get raw body (preserves decimal format like 499.00)
-    const rawBody = await getRawBody(req);
+    // Get raw body bytes (preserves exact formatting like 499.00)
+    const rawBuffer = await getRawBody(req);
     
     // Get signature and timestamp from headers
     const signature = req.headers['x-webhook-signature'];
@@ -369,16 +367,16 @@ export default async function handler(req, res) {
     console.log('[Webhook] Signature verification:', {
       signaturePresent: !!signature,
       timestampPresent: !!timestamp,
-      rawBodyLength: rawBody.length,
+      rawBodyLength: rawBuffer.length,
       secretConfigured: !!process.env.CASHFREE_WEBHOOK_SECRET
     });
     
-    // Verify signature using timestamp + rawBody (Cashfree format)
-    // IMPORTANT: rawBody must be in raw text format to preserve decimals (499.00 not 499)
-    const signaturePayload = timestamp + rawBody;
+    // Build payload as Buffer: timestamp (utf8) + raw bytes
+    const tsBuffer = Buffer.from(String(timestamp || ''), 'utf8');
+    const payloadBuffer = Buffer.concat([tsBuffer, rawBuffer]);
     const expectedSignature = crypto
       .createHmac('sha256', process.env.CASHFREE_WEBHOOK_SECRET)
-      .update(signaturePayload)
+      .update(payloadBuffer)
       .digest('base64');
 
     console.log('[Webhook] Signature comparison:', {
@@ -396,7 +394,7 @@ export default async function handler(req, res) {
     console.log('[Webhook] ✅ Signature verified successfully');
 
     // Parse the raw body to JSON
-    const webhookData = JSON.parse(rawBody);
+    const webhookData = JSON.parse(rawBuffer.toString('utf8'));
     
     console.log('Webhook received:', webhookData.type);
 
