@@ -1,29 +1,6 @@
 import { supabase } from "../../../services/supabase";
 import crypto from "crypto";
 
-/**
- * Cashfree Webhook Handler
- * 
- * Handles payment webhook events from Cashfree Payment Gateway
- * 
- * Required Webhook Events (Subscribe to these in Cashfree Dashboard):
- * - PAYMENT_SUCCESS_WEBHOOK: Payment completed successfully
- * - PAYMENT_FAILED_WEBHOOK: Payment failed or declined (optional but recommended)
- * - PAYMENT_USER_DROPPED_WEBHOOK: User abandoned payment (optional for analytics)
- * 
- * Actual Payload Structure:
- * {
- *   "data": {
- *     "order": { "order_id", "order_amount", "order_currency" },
- *     "payment": { "cf_payment_id", "payment_status", "payment_method", etc. },
- *     "customer_details": { "customer_name", "customer_email", etc. },
- *     "charges_details": { "service_charge", "settlement_amount", etc. }
- *   },
- *   "event_time": "2025-10-25T15:47:06+05:30",
- *   "type": "PAYMENT_SUCCESS_WEBHOOK"
- * }
- */
-
 // Disable body parsing to handle raw body for signature verification
 export const config = {
   api: {
@@ -34,17 +11,11 @@ export const config = {
 
 /**
  * Verifies webhook signature from Cashfree
- * Important: Always verify signatures in production to prevent fake webhooks
- * 
- * @param {string} rawBody - Raw request body as string
- * @param {string} signature - Signature from x-webhook-signature header
- * @param {string} timestamp - Timestamp from x-webhook-timestamp header
- * @returns {boolean} - True if signature is valid
+ * FIXED: Uses the correct signature format as per Cashfree documentation
  */
 function verifyWebhookSignature(rawBody, signature, timestamp) {
   const webhookSecret = process.env.CASHFREE_WEBHOOK_SECRET;
 
-  // Skip verification if webhook secret is not configured (sandbox mode)
   if (!webhookSecret) {
     console.warn("[Webhook] ⚠️ CASHFREE_WEBHOOK_SECRET not configured - Skipping signature verification");
     return true;
@@ -52,56 +23,30 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
 
   try {
     console.log("[Webhook] 🔍 Signature Debug Info:");
-    console.log("[Webhook] ├─ Webhook Secret:", webhookSecret);
-    console.log("[Webhook] ├─ Webhook Secret Length:", webhookSecret.length);
+    console.log("[Webhook] ├─ Webhook Secret (first/last 4):", 
+      webhookSecret.substring(0, 4) + "..." + webhookSecret.substring(webhookSecret.length - 4));
     console.log("[Webhook] ├─ Timestamp:", timestamp);
-    console.log("[Webhook] ├─ Raw Body (first 200 chars):", rawBody.substring(0, 200));
-    console.log("[Webhook] ├─ Raw Body (last 50 chars):", rawBody.substring(rawBody.length - 50));
+    console.log("[Webhook] ├─ Raw Body Length:", rawBody.length);
+    console.log("[Webhook] ├─ Received Signature:", signature);
 
-    // Try different signature formats that Cashfree might use
-    // In your current verifyWebhookSignature function, replace the formats array with:
-    // const formats = [
-    //   {
-    //     name: "timestamp(seconds) + rawBody",
-    //     value: Math.floor(parseInt(timestamp) / 1000).toString() + rawBody
-    //   },
-    //   {
-    //     name: "timestamp(milliseconds) + rawBody",
-    //     value: timestamp + rawBody
-    //   },
-    // ];
+    // FIX: Cashfree uses the EXACT raw body string without any modifications
+    // The signature is: base64(hmac_sha256(timestamp + body, secret))
+    
+    // Try the official Cashfree format
+    const message = timestamp + rawBody;
+    
+    console.log("[Webhook] ├─ Message (first 100 chars):", message.substring(0, 100));
+    console.log("[Webhook] ├─ Message (last 50 chars):", message.substring(message.length - 50));
+    
+    const expectedSignature = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(message)
+      .digest("base64");
 
-    const formats = [
-      {
-        name: "timestamp + rawBody (correct format)",
-        value: timestamp + rawBody  // No conversion needed
-      }
-    ];
+    console.log("[Webhook] ├─ Expected Signature:", expectedSignature);
+    console.log("[Webhook] ├─ Signatures Match:", expectedSignature === signature);
 
-    console.log("[Webhook] 🧪 Testing different signature formats:");
-
-    for (const format of formats) {
-      const testSignature = crypto
-        .createHmac("sha256", webhookSecret)
-        .update(format.value)
-        .digest("base64");
-
-      console.log(`[Webhook] ├─ Format: ${format.name}`);
-      console.log(`[Webhook] │  └─ Generated: ${testSignature}`);
-
-      if (testSignature === signature) {
-        console.log(`[Webhook] ✅ MATCH FOUND with format: ${format.name}`);
-        return true;
-      }
-    }
-
-    // None matched
-    console.error("[Webhook] ❌ No signature format matched!");
-    console.error("[Webhook] Received signature:", signature);
-    console.error("[Webhook] Timestamp:", timestamp);
-    console.error("[Webhook] Raw Body Length:", rawBody.length);
-
-    return false;
+    return expectedSignature === signature;
   } catch (err) {
     console.error("[Webhook] Error during signature verification:", err);
     return false;
@@ -109,17 +54,18 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
 }
 
 /**
- * Reads raw body from request stream
- * Required for webhook signature verification
+ * Reads raw body from request stream - FIXED version
  */
 async function getRawBody(req) {
   return new Promise((resolve, reject) => {
-    let data = "";
+    const chunks = [];
     req.on("data", (chunk) => {
-      data += chunk.toString();
+      chunks.push(chunk);
     });
     req.on("end", () => {
-      resolve(data);
+      // IMPORTANT: Use Buffer.concat to preserve exact bytes
+      const buffer = Buffer.concat(chunks);
+      resolve(buffer.toString('utf8'));
     });
     req.on("error", reject);
   });
@@ -127,11 +73,6 @@ async function getRawBody(req) {
 
 /**
  * Updates purchase record in Supabase with payment details
- * 
- * @param {string} orderId - Transaction/order ID from Cashfree
- * @param {string} status - Payment status ('success', 'failed', 'abandoned')
- * @param {object} webhookData - Full webhook data containing payment, customer, and charges details
- * @returns {Promise<object>} - Result object with success status
  */
 async function updatePurchaseStatus(orderId, status, webhookData = {}) {
   try {
@@ -139,7 +80,6 @@ async function updatePurchaseStatus(orderId, status, webhookData = {}) {
 
     const { payment = {}, customer_details = {}, charges_details = {} } = webhookData;
 
-    // Prepare update data
     const updateData = {
       payment_status: status,
       updated_at: new Date().toISOString(),
@@ -155,17 +95,15 @@ async function updatePurchaseStatus(orderId, status, webhookData = {}) {
       updateData.cashfree_payment_id = payment.cf_payment_id.toString();
     }
 
-    // Store payment method details (card, UPI, etc.)
+    // Store payment method details
     if (payment.payment_method) {
       updateData.payment_method = payment.payment_method;
     }
 
-    // Store payment group (credit_card, debit_card, upi, netbanking, etc.)
     if (payment.payment_group) {
       updateData.payment_group = payment.payment_group;
     }
 
-    // Store bank reference for reconciliation
     if (payment.bank_reference) {
       updateData.bank_reference = payment.bank_reference;
     }
@@ -210,7 +148,6 @@ async function updatePurchaseStatus(orderId, status, webhookData = {}) {
 
 /**
  * Main webhook handler
- * Processes incoming webhook events from Cashfree
  */
 export default async function handler(req, res) {
   const startTime = Date.now();
@@ -225,9 +162,9 @@ export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== "POST") {
     console.error("[Webhook] ❌ Method not allowed:", req.method);
-    return res.status(405).json({
+    return res.status(405).json({ 
       success: false,
-      message: "Method Not Allowed - Only POST requests are accepted"
+      message: "Method Not Allowed - Only POST requests are accepted" 
     });
   }
 
@@ -236,15 +173,7 @@ export default async function handler(req, res) {
     const rawBody = await getRawBody(req);
     console.log("[Webhook] 📦 Raw Body Length:", rawBody.length);
 
-    // Log all headers to debug
-    console.log("[Webhook] 📋 All Request Headers:");
-    Object.keys(req.headers).forEach(key => {
-      if (key.toLowerCase().includes('webhook') || key.toLowerCase().includes('signature') || key.toLowerCase().includes('timestamp')) {
-        console.log(`[Webhook] ├─ ${key}: ${req.headers[key]}`);
-      }
-    });
-
-    // Extract signature headers (try both casings)
+    // Extract signature headers
     const signature = req.headers["x-webhook-signature"] || req.headers["X-Webhook-Signature"];
     const timestamp = req.headers["x-webhook-timestamp"] || req.headers["X-Webhook-Timestamp"];
 
@@ -254,12 +183,12 @@ export default async function handler(req, res) {
     console.log("[Webhook] ├─ Timestamp:", timestamp ? timestamp : "Missing");
     console.log("[Webhook] └─ Secret Configured:", process.env.CASHFREE_WEBHOOK_SECRET ? "Yes" : "No");
 
-    // Always verify signature if headers are present
+    // Verify signature if headers are present
     if (signature && timestamp) {
       const isValid = verifyWebhookSignature(rawBody, signature, timestamp);
-
+      
       if (!isValid) {
-        console.error("[Webhook] ⚠️ Invalid webhook signature - but continuing anyway (TEMPORARY)");
+        console.error("[Webhook] ❌ Invalid webhook signature - Rejecting webhook");
         return res.status(401).json({ 
           success: false,
           message: "Invalid webhook signature" 
@@ -267,16 +196,19 @@ export default async function handler(req, res) {
       } else {
         console.log("[Webhook] ✅ Signature verified successfully");
       }
+    } else {
+      console.warn("[Webhook] ⚠️ Missing signature or timestamp headers");
+      // In production, you might want to be stricter about this
     }
 
     // Parse webhook payload from raw body
     const webhookPayload = JSON.parse(rawBody);
-
+    
     if (!webhookPayload || !webhookPayload.type) {
       console.error("[Webhook] ❌ Invalid payload - missing 'type' field");
-      return res.status(400).json({
+      return res.status(400).json({ 
         success: false,
-        message: "Invalid webhook payload"
+        message: "Invalid webhook payload" 
       });
     }
 
@@ -287,8 +219,6 @@ export default async function handler(req, res) {
     // Log webhook details
     console.log("[Webhook] 📋 Event Type:", eventType);
     console.log("[Webhook] 🕐 Event Time:", eventTime);
-    console.log("[Webhook] 📦 Full Payload:");
-    console.log(JSON.stringify(webhookPayload, null, 2));
 
     // Extract order details
     const order = webhookData.order || {};
@@ -299,9 +229,9 @@ export default async function handler(req, res) {
 
     if (!orderId) {
       console.error("[Webhook] ❌ Missing order_id in webhook payload");
-      return res.status(400).json({
+      return res.status(400).json({ 
         success: false,
-        message: "Missing order_id in webhook payload"
+        message: "Missing order_id in webhook payload" 
       });
     }
 
@@ -317,35 +247,21 @@ export default async function handler(req, res) {
     switch (eventType) {
       case "PAYMENT_SUCCESS_WEBHOOK":
         console.log("[Webhook] ✅ Processing PAYMENT SUCCESS");
-        console.log(`[Webhook] 💰 Payment of ₹${orderAmount} received successfully`);
-
-        if (payment.payment_method?.card) {
-          console.log(`[Webhook] 💳 Card: ${payment.payment_method.card.card_network} ending ${payment.payment_method.card.card_number}`);
-        }
-
         updateResult = await updatePurchaseStatus(orderId, "success", webhookData);
         break;
 
       case "PAYMENT_FAILED_WEBHOOK":
         console.log("[Webhook] ❌ Processing PAYMENT FAILED");
-        console.log(`[Webhook] 💔 Payment failed: ${payment.payment_message || 'Unknown reason'}`);
-
         updateResult = await updatePurchaseStatus(orderId, "failed", webhookData);
         break;
 
       case "PAYMENT_USER_DROPPED_WEBHOOK":
         console.log("[Webhook] 🚪 Processing USER DROPPED");
-        console.log("[Webhook] User abandoned the payment page");
-
         updateResult = await updatePurchaseStatus(orderId, "abandoned", webhookData);
         break;
 
       case "PAYMENT_CHARGES_WEBHOOK":
         console.log("[Webhook] 💵 Processing PAYMENT CHARGES");
-        console.log(`[Webhook] Service Charge: ₹${webhookData.charges_details?.service_charge || 0}`);
-        console.log(`[Webhook] Settlement Amount: ₹${webhookData.charges_details?.settlement_amount || 0}`);
-
-        // This webhook is informational - update charges if payment is already successful
         if (paymentStatus === "SUCCESS") {
           updateResult = await updatePurchaseStatus(orderId, "success", webhookData);
         } else {
@@ -356,13 +272,12 @@ export default async function handler(req, res) {
 
       default:
         console.log(`[Webhook] ℹ️ Unhandled webhook event type: ${eventType}`);
-        console.log("[Webhook] ℹ️ This event type is not critical for course purchases");
         updateResult = { success: true, skipped: true };
     }
 
     // Log the result
     const processingTime = Date.now() - startTime;
-
+    
     if (updateResult.success) {
       console.log("\n[Webhook] ╔═══════════════════════════════════════════════════════════");
       console.log("[Webhook] ║ ✅ WEBHOOK PROCESSED SUCCESSFULLY");
@@ -380,8 +295,7 @@ export default async function handler(req, res) {
     }
 
     // Always return 200 OK to prevent Cashfree from retrying
-    // Even if there's an error, we acknowledge receipt and log it
-    return res.status(200).json({
+    return res.status(200).json({ 
       success: true,
       received: true,
       orderId: orderId,
@@ -398,10 +312,8 @@ export default async function handler(req, res) {
     console.error("[Webhook] ║ Error:", err.message);
     console.error("[Webhook] ║ Stack:", err.stack);
     console.error("[Webhook] ╚═══════════════════════════════════════════════════════════\n");
-
-    // Return 200 even on error to prevent retries for malformed data
-    // The error is logged for manual investigation
-    return res.status(200).json({
+    
+    return res.status(200).json({ 
       success: true,
       received: true,
       error: "Processing error logged - will be investigated",
@@ -410,5 +322,3 @@ export default async function handler(req, res) {
     });
   }
 }
-
-
