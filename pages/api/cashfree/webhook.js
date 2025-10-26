@@ -27,7 +27,7 @@ import crypto from "crypto";
 // Disable body parsing to handle raw body for signature verification
 export const config = {
   api: {
-    bodyParser: true,
+    bodyParser: false,
     externalResolver: true,
   },
 };
@@ -64,6 +64,8 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
       console.error("[Webhook] ❌ Signature mismatch!");
       console.error("[Webhook] Expected:", expectedSignature);
       console.error("[Webhook] Received:", signature);
+      console.error("[Webhook] Timestamp:", timestamp);
+      console.error("[Webhook] Raw Body Length:", rawBody.length);
     }
     
     return isValid;
@@ -71,6 +73,23 @@ function verifyWebhookSignature(rawBody, signature, timestamp) {
     console.error("[Webhook] Error during signature verification:", err);
     return false;
   }
+}
+
+/**
+ * Reads raw body from request stream
+ * Required for webhook signature verification
+ */
+async function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    let data = "";
+    req.on("data", (chunk) => {
+      data += chunk.toString();
+    });
+    req.on("end", () => {
+      resolve(data);
+    });
+    req.on("error", reject);
+  });
 }
 
 /**
@@ -180,8 +199,48 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Parse webhook payload
-    const webhookPayload = req.body;
+    // Read raw body for signature verification
+    const rawBody = await getRawBody(req);
+    console.log("[Webhook] 📦 Raw Body Length:", rawBody.length);
+    
+    // Extract signature headers
+    const signature = req.headers["x-webhook-signature"];
+    const timestamp = req.headers["x-webhook-timestamp"];
+    
+    console.log("[Webhook] 🔐 Verifying webhook signature...");
+    console.log("[Webhook] ├─ Environment:", process.env.NODE_ENV || "development");
+    console.log("[Webhook] ├─ Signature:", signature ? "Present" : "Missing");
+    console.log("[Webhook] ├─ Timestamp:", timestamp ? timestamp : "Missing");
+    console.log("[Webhook] └─ Secret Configured:", process.env.CASHFREE_WEBHOOK_SECRET ? "Yes" : "No");
+    
+    // Always verify signature if headers are present
+    if (signature && timestamp) {
+      const isValid = verifyWebhookSignature(rawBody, signature, timestamp);
+      
+      if (!isValid) {
+        console.error("[Webhook] ❌ Invalid webhook signature!");
+        return res.status(401).json({ 
+          success: false,
+          message: "Invalid webhook signature" 
+        });
+      }
+      
+      console.log("[Webhook] ✅ Signature verified successfully");
+    } else if (process.env.CASHFREE_WEBHOOK_SECRET) {
+      // If secret is configured but headers are missing, reject the request
+      console.error("[Webhook] ❌ Missing webhook authentication headers (signature/timestamp)");
+      return res.status(401).json({ 
+        success: false,
+        message: "Missing webhook authentication headers" 
+      });
+    } else {
+      // Only skip verification if secret is not configured (local development)
+      console.warn("[Webhook] ⚠️ CASHFREE_WEBHOOK_SECRET not configured - Proceeding without verification");
+      console.warn("[Webhook] ⚠️ This should ONLY happen in local development!");
+    }
+
+    // Parse webhook payload from raw body
+    const webhookPayload = JSON.parse(rawBody);
     
     if (!webhookPayload || !webhookPayload.type) {
       console.error("[Webhook] ❌ Invalid payload - missing 'type' field");
@@ -200,38 +259,6 @@ export default async function handler(req, res) {
     console.log("[Webhook] 🕐 Event Time:", eventTime);
     console.log("[Webhook] 📦 Full Payload:");
     console.log(JSON.stringify(webhookPayload, null, 2));
-
-    // Verify webhook signature in production
-    if (process.env.NODE_ENV === "production") {
-      const signature = req.headers["x-webhook-signature"];
-      const timestamp = req.headers["x-webhook-timestamp"];
-      
-      if (!signature || !timestamp) {
-        console.error("[Webhook] ❌ Missing authentication headers");
-        return res.status(401).json({ 
-          success: false,
-          message: "Missing webhook authentication headers" 
-        });
-      }
-
-      const isValid = verifyWebhookSignature(
-        JSON.stringify(req.body),
-        signature,
-        timestamp
-      );
-      
-      if (!isValid) {
-        console.error("[Webhook] ❌ Invalid webhook signature!");
-        return res.status(401).json({ 
-          success: false,
-          message: "Invalid webhook signature" 
-        });
-      }
-      
-      console.log("[Webhook] ✅ Signature verified successfully");
-    } else {
-      console.log("[Webhook] ⚠️ Running in development mode - Signature verification skipped");
-    }
 
     // Extract order details
     const order = webhookData.order || {};
