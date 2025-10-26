@@ -351,51 +351,50 @@ function getRawBody(req) {
   });
 }
 
+/**
+ * Verify Cashfree webhook signature and parse JSON body
+ */
+function verifyAndParseRequest(req, rawBuffer) {
+  const timestamp = req.headers['x-webhook-timestamp'];
+  const signature = req.headers['x-webhook-signature'];
+  const secretKey = process.env.CASHFREE_WEBHOOK_SECRET || '';
+
+  if (!timestamp || !signature) {
+    throw new Error('Missing signature headers');
+  }
+
+  if (!secretKey) {
+    throw new Error('Server misconfigured: missing CASHFREE_WEBHOOK_SECRET');
+  }
+
+  const bodyString = String(timestamp) + rawBuffer.toString('utf8');
+  const generatedSignature = crypto
+    .createHmac('sha256', secretKey)
+    .update(bodyString)
+    .digest('base64');
+
+  if (generatedSignature !== signature) {
+    throw new Error('Generated signature and received signature did not match.');
+  }
+
+  return JSON.parse(rawBuffer.toString('utf8'));
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Get raw body bytes (preserves exact formatting like 499.00)
     const rawBuffer = await getRawBody(req);
-    
-    // Get signature and timestamp from headers
-    const signature = req.headers['x-webhook-signature'];
-    const timestamp = req.headers['x-webhook-timestamp'];
-    
-    console.log('[Webhook] Signature verification:', {
-      signaturePresent: !!signature,
-      timestampPresent: !!timestamp,
-      rawBodyLength: rawBuffer.length,
-      secretConfigured: !!process.env.CASHFREE_WEBHOOK_SECRET
-    });
-    
-    // Build payload as Buffer: timestamp (utf8) + raw bytes
-    const tsBuffer = Buffer.from(String(timestamp || ''), 'utf8');
-    const payloadBuffer = Buffer.concat([tsBuffer, rawBuffer]);
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.CASHFREE_WEBHOOK_SECRET)
-      .update(payloadBuffer)
-      .digest('base64');
-
-    console.log('[Webhook] Signature comparison:', {
-      received: signature,
-      expected: expectedSignature,
-      match: signature === expectedSignature,
-      timestamp: timestamp
-    });
-
-    if (signature !== expectedSignature) {
-      console.error('[Webhook] ❌ Invalid webhook signature!');
+    let webhookData;
+    try {
+      webhookData = verifyAndParseRequest(req, rawBuffer);
+    } catch (e) {
+      console.error('[Webhook] Signature verification failed:', e.message);
       return res.status(401).json({ error: 'Invalid signature' });
     }
-    
-    console.log('[Webhook] ✅ Signature verified successfully');
 
-    // Parse the raw body to JSON
-    const webhookData = JSON.parse(rawBuffer.toString('utf8'));
-    
     console.log('Webhook received:', webhookData.type);
 
     // Handle different webhook events
