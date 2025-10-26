@@ -323,8 +323,30 @@
 //   }
 // }
 
-// pages/api/webhook/cashfree.js
+/// pages/api/cashfree/webhook.js
 import crypto from 'crypto';
+
+// Disable body parsing to get raw body for signature verification
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+/**
+ * Read raw body from request
+ */
+function getRawBody(req) {
+  return new Promise((resolve) => {
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      resolve(data);
+    });
+  });
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -332,24 +354,36 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Verify webhook signature
-    const signature = req.headers['x-webhook-signature'];
-    const payload = JSON.stringify(req.body);
+    // Get raw body
+    const rawBody = await getRawBody(req);
     
+    // Get signature from header
+    const signature = req.headers['x-webhook-signature'];
+    
+    // Verify signature using the raw body (not stringified)
     const expectedSignature = crypto
       .createHmac('sha256', process.env.CASHFREE_WEBHOOK_SECRET)
-      .update(payload)
+      .update(rawBody)
       .digest('base64');
+
+    console.log('Signature verification:', {
+      received: signature,
+      expected: expectedSignature,
+      match: signature === expectedSignature
+    });
 
     if (signature !== expectedSignature) {
       console.error('Invalid webhook signature');
       return res.status(401).json({ error: 'Invalid signature' });
     }
 
-    const webhookData = req.body;
+    // Parse the raw body to JSON
+    const webhookData = JSON.parse(rawBody);
     
+    console.log('Webhook received:', webhookData.type);
+
     // Handle different webhook events
-    switch (webhookData.event) {
+    switch (webhookData.type) {
       case 'PAYMENT_SUCCESS_WEBHOOK':
         await handlePaymentSuccess(webhookData);
         break;
@@ -363,7 +397,7 @@ export default async function handler(req, res) {
         break;
         
       default:
-        console.log('Unhandled webhook event:', webhookData.event);
+        console.log('Unhandled webhook event:', webhookData.type);
     }
 
     res.status(200).json({ received: true });
@@ -374,43 +408,45 @@ export default async function handler(req, res) {
 }
 
 async function handlePaymentSuccess(data) {
-  const { orderId, referenceId, amount, paymentMethod } = data;
+  const order = data.data?.order || {};
+  const payment = data.data?.payment || {};
   
   console.log('Payment Success:', {
-    orderId,
-    referenceId,
-    amount,
-    paymentMethod
+    orderId: order.order_id,
+    amount: order.order_amount,
+    paymentId: payment.cf_payment_id,
+    paymentMethod: payment.payment_method
   });
   
-  // Update your database
+  // TODO: Update your database here
+  // Update order status to success
   // Send confirmation email
-  // Update order status
-  // etc.
+  // Grant course access, etc.
 }
 
 async function handlePaymentFailure(data) {
-  const { orderId, errorCode, errorDescription } = data;
+  const order = data.data?.order || {};
+  const payment = data.data?.payment || {};
   
   console.log('Payment Failed:', {
-    orderId,
-    errorCode,
-    errorDescription
+    orderId: order.order_id,
+    error: payment.payment_message,
+    errorCode: payment.payment_code
   });
   
-  // Update order status to failed
-  // Notify customer
-  // etc.
+  // TODO: Update order status to failed
+  // Notify customer, etc.
 }
 
 async function handleRefundSuccess(data) {
-  const { orderId, refundId, refundAmount } = data;
+  const order = data.data?.order || {};
+  const payment = data.data?.payment || {};
   
   console.log('Refund Processed:', {
-    orderId,
-    refundId,
-    refundAmount
+    orderId: order.order_id,
+    refundId: payment.cf_payment_id,
+    refundAmount: payment.refund_amount
   });
   
-  // Update refund status in database
+  // TODO: Update refund status in database
 }
