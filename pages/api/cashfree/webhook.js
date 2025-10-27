@@ -1,59 +1,78 @@
 import crypto from "crypto";
 
-// ✅ Disable body parsing (very important!)
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-// ✅ Helper to read raw body from request
-async function getRawBody(req) {
+function getRawBody(req) {
   return new Promise((resolve, reject) => {
-    let data = [];
-    req.on("data", (chunk) => data.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(data)));
+    const chunks = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => resolve(Buffer.concat(chunks)));
     req.on("error", reject);
   });
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") return res.status(405).end();
+
+  try {
+    const raw = await getRawBody(req);              // Buffer (exact bytes)
+    const bodyUtf8 = raw.toString("utf8");         // string interpretation
+    const bodyHex = raw.toString("hex");           // hex for byte-level diff
+
+    const timestamp = req.headers["x-webhook-timestamp"];
+    const signature = req.headers["x-webhook-signature"];
+    const contentEncoding = req.headers["content-encoding"] || "none";
+    const secret = process.env.CASHFREE_WEBHOOK_SECRET || "<MISSING>";
+
+    // compute HMAC from timestamp + raw bytes
+    const toSign = String(timestamp) + bodyUtf8;
+
+    const computed = crypto
+      .createHmac("sha256", secret)
+      .update(toSign)
+      .digest("base64");
+
+    // Also compute raw-bytes HMAC for comparison (Buffer based)
+    const computedBuf = crypto
+      .createHmac("sha256", secret)
+      .update(Buffer.concat([Buffer.from(String(timestamp), "utf8"), raw]))
+      .digest();
+
+    const computedBase64FromBuf = computedBuf.toString("base64");
+
+    // Logs (these will appear in Vercel / server logs)
+    console.log("=== WEBHOOK DEBUG START ===");
+    console.log("content-encoding:", contentEncoding);
+    console.log("timestamp header:", timestamp);
+    console.log("signature header:", signature);
+    console.log("secret present?:", secret !== "<MISSING>");
+    console.log("raw body length (bytes):", raw.length);
+    console.log("raw body utf8 string:", bodyUtf8);
+    console.log("raw body hex (first 300 chars):", bodyHex.slice(0, 300));
+    console.log("toSign (first 300 chars):", (String(timestamp) + bodyUtf8).slice(0, 300));
+    console.log("computed (string .digest('base64')):", computed);
+    console.log("computed (from Buffer concat .toString('base64')):", computedBase64FromBuf);
+    console.log("expected == computed ?: ", signature === computed || signature === computedBase64FromBuf);
+    console.log("=== WEBHOOK DEBUG END ===");
+
+    // Return debug info to caller (optional - you can remove in prod)
+    return res.status(200).json({
+      ok: true,
+      debug: {
+        contentEncoding,
+        timestamp,
+        signature,
+        computed,
+        computedBase64FromBuf,
+        rawLength: raw.length,
+      },
+    });
+  } catch (err) {
+    console.error("Webhook debug error:", err);
+    return res.status(500).json({ error: err.message });
   }
-
-  const rawBody = await getRawBody(req);
-  const bodyString = rawBody.toString("utf8");
-
-  const timestamp = req.headers["x-webhook-timestamp"];
-  const signature = req.headers["x-webhook-signature"];
-  const secretKey = process.env.CASHFREE_WEBHOOK_SECRET;
-
-  if (!timestamp || !signature || !secretKey) {
-    console.error("❌ Missing headers or secret key");
-    return res.status(400).json({ error: "Missing headers or secret key" });
-  }
-
-  // ✅ Create expected signature
-  const expected = crypto
-    .createHmac("sha256", secretKey)
-    .update(timestamp + bodyString)
-    .digest("base64");
-
-  if (expected !== signature) {
-    console.error("❌ Invalid signature");
-    console.log("Expected:", expected);
-    console.log("Received:", signature);
-    return res.status(401).json({ error: "Invalid signature" });
-  }
-
-  console.log("✅ Webhook signature verified");
-  const data = JSON.parse(bodyString);
-  console.log("📦 Webhook Data:", data);
-
-  // TODO: Handle events here
-  // Example:
-  // if (data.type === "PAYMENT_SUCCESS_WEBHOOK") { ... }
-
-  return res.status(200).json({ received: true });
 }
