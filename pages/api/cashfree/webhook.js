@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { verifyWebhookSignature } from "../../../services/cashfree-backend-pg";
 
 export const config = {
   api: {
@@ -26,51 +27,33 @@ export default async function handler(req, res) {
     const timestamp = req.headers["x-webhook-timestamp"];
     const signature = req.headers["x-webhook-signature"];
     const contentEncoding = req.headers["content-encoding"] || "none";
-    const secret = process.env.CASHFREE_WEBHOOK_SECRET || "<MISSING>";
 
-    // compute HMAC from timestamp + raw bytes
-    const toSign = String(timestamp) + bodyUtf8;
+    if (!timestamp || !signature) {
+      return res.status(400).json({ error: "Missing webhook headers" });
+    }
 
-    const computed = crypto
-      .createHmac("sha256", secret)
-      .update(toSign)
-      .digest("base64");
+    let event;
+    try {
+      event = verifyWebhookSignature(signature, bodyUtf8, String(timestamp));
+    } catch (e) {
+      console.warn("Cashfree webhook signature verification failed:", e?.message);
+      return res.status(401).json({ error: "Invalid signature" });
+    }
 
-    // Also compute raw-bytes HMAC for comparison (Buffer based)
-    const computedBuf = crypto
-      .createHmac("sha256", secret)
-      .update(Buffer.concat([Buffer.from(String(timestamp), "utf8"), raw]))
-      .digest();
+    // Minimal logging; toggle verbose via env if needed
+    if (String(process.env.CASHFREE_WEBHOOK_DEBUG || "false").toLowerCase() === "true") {
+      console.log("=== WEBHOOK DEBUG START ===");
+      console.log("content-encoding:", contentEncoding);
+      console.log("timestamp header:", timestamp);
+      console.log("signature header:", signature);
+      console.log("raw body length (bytes):", raw.length);
+      console.log("raw body hex (first 300 chars):", bodyHex.slice(0, 300));
+      console.log("event type:", event?.type);
+      console.log("=== WEBHOOK DEBUG END ===");
+    }
 
-    const computedBase64FromBuf = computedBuf.toString("base64");
-
-    // Logs (these will appear in Vercel / server logs)
-    console.log("=== WEBHOOK DEBUG START ===");
-    console.log("content-encoding:", contentEncoding);
-    console.log("timestamp header:", timestamp);
-    console.log("signature header:", signature);
-    console.log("secret present?:", secret !== "<MISSING>");
-    console.log("raw body length (bytes):", raw.length);
-    console.log("raw body utf8 string:", bodyUtf8);
-    console.log("raw body hex (first 300 chars):", bodyHex.slice(0, 300));
-    console.log("toSign (first 300 chars):", (String(timestamp) + bodyUtf8).slice(0, 300));
-    console.log("computed (string .digest('base64')):", computed);
-    console.log("computed (from Buffer concat .toString('base64')):", computedBase64FromBuf);
-    console.log("expected == computed ?: ", signature === computed || signature === computedBase64FromBuf);
-    console.log("=== WEBHOOK DEBUG END ===");
-
-    // Return debug info to caller (optional - you can remove in prod)
-    return res.status(200).json({
-      ok: true,
-      debug: {
-        contentEncoding,
-        timestamp,
-        signature,
-        computed,
-        computedBase64FromBuf,
-        rawLength: raw.length,
-      },
-    });
+    // Process event here as needed. For now, acknowledge receipt.
+    return res.status(200).json({ ok: true, type: event?.type });
   } catch (err) {
     console.error("Webhook debug error:", err);
     return res.status(500).json({ error: err.message });
