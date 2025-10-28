@@ -33,9 +33,13 @@ export default async function handler(req, res) {
     }
 
     let event;
+    //  Add meaningful logs here
+    console.log("Signature verification started");
     try {
       event = verifyWebhookSignature(signature, bodyUtf8, String(timestamp));
+      console.log("Signature verification successful");
     } catch (e) {
+      console.log("Signature verification failed");
       console.warn("Cashfree webhook signature verification failed:", e?.message);
       return res.status(401).json({ error: "Invalid signature" });
     }
