@@ -49,11 +49,18 @@ export default function CheckoutPage() {
       if (!response.ok) {
         const msg = data?.message || data?.details?.message || "Failed to create order";
         const code = data?.code || data?.details?.code || response.status;
+        console.error("[Checkout] Order creation error:", { status: response.status, code, msg, data });
         throw new Error(`${msg} [${code}]`);
       }
       const paymentSessionId = data?.payment_session_id || data?.order_token;
       if (!paymentSessionId) throw new Error("Missing payment session id");
-      await cashfree.checkout({ paymentSessionId, redirectTarget: "_self" });
+      try {
+        await cashfree.checkout({ paymentSessionId, redirectTarget: "_self" });
+      } catch (checkoutErr) {
+        console.error("[Checkout] Cashfree checkout() failed:", checkoutErr);
+        alert(checkoutErr?.message || "Checkout initialization failed");
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Payment failed to initiate:", error);
       alert(error?.message || "Payment initiation failed");
