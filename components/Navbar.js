@@ -61,6 +61,14 @@ const Navbar = () => {
                 Results
               </a>
             </Link>}
+            {isAuthenticated && <Link href={"/profile/purchases"}>
+              <a
+                className="mr-5 hover:text-gray-900"
+                onClick={() => setShowHead("Purchases")}
+              >
+                Purchases
+              </a>
+            </Link>}
 
             <BiMessageRoundedDetail />
             <Link href={"/about"}>
@@ -167,6 +175,17 @@ const Navbar = () => {
               onClick={() => setShowOption(true)}
             >
               📊 Results
+            </a>
+          </Link>
+        </div>}
+
+        {isAuthenticated && <div className="flex flex-row mb-3 items-center">
+          <Link href={"/profile/purchases"}>
+            <a
+              className="mr-5 hover:text-gray-900"
+              onClick={() => setShowOption(true)}
+            >
+              🛒 Purchases
             </a>
           </Link>
         </div>}
