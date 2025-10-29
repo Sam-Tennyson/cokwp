@@ -1,106 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-
-import { BiMessageRoundedDetail } from "react-icons/bi";
-import { BiHome } from "react-icons/bi";
-import { TiContacts } from "react-icons/ti";
+import { useRouter } from "next/router";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useSessionStore } from "../stores/session";
 import { useProfileStore } from "../stores/profile";
 import Router from "next/router";
 
 const Navbar = () => {
-  const { handleSignOut } = useSessionStore()
-  const isAuthenticated = useSessionStore((state) => state.isAuthenticated)
-  const profile = useProfileStore((state) => state.profile)
-  const isAdmin = useProfileStore((state) => state.isAdmin)
-  const [showHead, setShowHead] = useState("");
-  const [showOption, setShowOption] = useState(true);
+  const { handleSignOut } = useSessionStore();
+  const isAuthenticated = useSessionStore((state) => state.isAuthenticated);
+  const profile = useProfileStore((state) => state.profile);
+  const isAdmin = useProfileStore((state) => state.isAdmin);
+  const router = useRouter();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const handleSignOutClick = async () => {
-    setShowOption(true);
-    localStorage.setItem("authToken", "")
-    await handleSignOut()
-    Router.push('/')
-  }
+    setIsMobileOpen(false);
+    localStorage.setItem("authToken", "");
+    await handleSignOut();
+    Router.push("/");
+  };
+
+  const navLinks = [
+    { href: "/premium-courses", label: "Premium Courses", authOnly: false },
+    { href: "/quiz", label: "Quiz", authOnly: true },
+    { href: "/profile", label: "Profile", authOnly: true },
+    { href: "/results", label: "Results", authOnly: true },
+    { href: "/profile/purchases", label: "Purchases", authOnly: true },
+    { href: "/about", label: "About Us", authOnly: false },
+    { href: "/contact", label: "Contact Us", authOnly: false }
+  ];
+
+  const isActive = (href) => router.pathname === href;
+
+  const NavItem = ({ href, label }) => (
+    <Link href={href}>
+      <a
+        className={`px-2 py-1 text-sm transition-colors hover:text-gray-900 ${
+          isActive(href) ? "text-gray-900" : "text-gray-600"
+        }`}
+      >
+        {label}
+      </a>
+    </Link>
+  );
 
   return (
     <>
-      <header className="text-gray-500 sm:text-sm body-font m-auto border-b-0 w-full">
-        <div className="container mx-auto md:mb-4 flex flex-wrap p-3 px-5   justify-between flex-row md:flex-row items-center">
+      <header className="sticky top-0 z-30 w-full border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
           <Link href={"/"}>
-            <a className="flex title-font font-medium items-center lg:mx-20  text-gray-900 mb-4 md:mb-0">
-              <img src="/download.png" width="30px" alt="" />
-              <span className="ml-3 text-xl mx-10">COKWP</span>
+            <a className="flex items-center text-gray-900">
+              <img src="/download.png" width="30px" alt="COKWP Logo" />
+              <span className="ml-3 text-lg font-semibold tracking-tight">COKWP</span>
             </a>
           </Link>
-          <nav
-            className={`md:ml-auto md:flex hidden md:flex-row md:flex-wrap md:items-center `}
-          >
-            {/* <Link href={"/premium-courses"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                onClick={() => setShowHead("Premium Courses")}
-              >
-                Premium Courses
-              </a>
-            </Link> */}
-            {isAuthenticated && <Link href={"/quiz"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                onClick={() => setShowHead("Dashboard")}
-              >
-                Quiz
-              </a>
-            </Link>}
-            {isAuthenticated && <Link href={"/results"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                onClick={() => setShowHead("Results")}
-              >
-                Results
-              </a>
-            </Link>}
-            {isAuthenticated && <Link href={"/profile/purchases"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                onClick={() => setShowHead("Purchases")}
-              >
-                Purchases
-              </a>
-            </Link>}
-
-            <BiMessageRoundedDetail />
-            <Link href={"/about"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                onClick={() => setShowHead("About Us")}
-              >
-                About Us
-              </a>
-            </Link>
-            <TiContacts />
-            <Link href={"/contact"}>
-              <a
-                className="mr-5 hover:text-gray-900"
-                onClick={() => setShowHead("About Us")}
-              >
-                Contact Us
-              </a>
-            </Link>
+          <nav className="hidden md:flex items-center gap-4">
+            {navLinks
+              .filter((l) => (l.authOnly ? isAuthenticated : true))
+              .map((l) => (
+                <NavItem key={l.href} href={l.href} label={l.label} />
+              ))}
             {!isAuthenticated ? (
-              <>
-                {/* <Link href={"/signup"}>
-                  <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2">
-                    Sign Up
-                  </button>
-                </Link> */}
-                <Link href={"/login"}>
-                  <button className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2">
-                    Login
-                  </button>
-                </Link>
-              </>
+              <Link href={"/login"}>
+                <button className="ml-2 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-white text-sm font-medium shadow-sm transition-colors hover:bg-blue-700 focus:outline-none">
+                  Login
+                </button>
+              </Link>
             ) : (
               <div className="flex items-center gap-3">
                 <div className="flex flex-col items-end">
@@ -110,7 +76,7 @@ const Navbar = () => {
                       : profile?.email || "User"}
                   </span>
                   {isAdmin && (
-                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                    <span className="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
                       Admin
                     </span>
                   )}
@@ -122,12 +88,13 @@ const Navbar = () => {
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
-                    {profile?.first_name?.[0]?.toUpperCase() || profile?.email?.[0]?.toUpperCase() || "U"}
+                  <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-medium">
+                    {profile?.first_name?.[0]?.toUpperCase() ||
+                      profile?.email?.[0]?.toUpperCase() || "U"}
                   </div>
                 )}
                 <button
-                  className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
+                  className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-white text-xs font-medium shadow-sm transition-colors hover:bg-gray-700 focus:outline-none"
                   onClick={handleSignOutClick}
                 >
                   Logout
@@ -135,110 +102,49 @@ const Navbar = () => {
               </div>
             )}
           </nav>
-
-          <div
-            onClick={() => setShowOption(!showOption)}
-            className="md:ml-auto flex flex-row md:hidden  flex-wrap items-center  justify-center"
+          <button
+            onClick={() => setIsMobileOpen((v) => !v)}
+            aria-label="Toggle navigation menu"
+            className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100"
           >
             <GiHamburgerMenu />
-          </div>
+          </button>
         </div>
       </header>
       <nav
-        className={` text-gray-500 bg-yellow-100 p-3 ${showOption ? "hidden" : "flex"
-          } text-sm body-font m-auto border-b-0 ml-auto md:hidden flex-col flex-wrap items-center w-full`}
+        className={`md:hidden ${
+          isMobileOpen ? "flex" : "hidden"
+        } w-full flex-col border-b bg-white px-4 py-3 text-sm`}
       >
-        <div className="flex  flex-row mb-3 items-center">
-          <BiHome />
-          {/* <Link href={"/premium-courses"}>
-            <a
-              className="mr-5 hover:text-gray-900"
-              onClick={() => setShowOption(true)}
-            >
-              Premium Courses
-            </a>
-          </Link> */}
-          {isAuthenticated && <Link href={"/quiz"}>
-            <a
-              className="mr-5 hover:text-gray-900"
-              onClick={() => setShowOption(true)}
-            >
-              Quiz
-            </a>
-          </Link>}
-        </div>
-
-        {isAuthenticated && <div className="flex flex-row mb-3 items-center">
-          <Link href={"/results"}>
-            <a
-              className="mr-5 hover:text-gray-900"
-              onClick={() => setShowOption(true)}
-            >
-              📊 Results
-            </a>
-          </Link>
-        </div>}
-
-        {isAuthenticated && <div className="flex flex-row mb-3 items-center">
-          <Link href={"/profile/purchases"}>
-            <a
-              className="mr-5 hover:text-gray-900"
-              onClick={() => setShowOption(true)}
-            >
-              🛒 Purchases
-            </a>
-          </Link>
-        </div>}
-
-        <div className="flex flex-row mb-3 items-center">
-          <BiMessageRoundedDetail />
-          <Link href={"/about"}>
-            <a
-              className="mr-5 hover:text-gray-900"
-              onClick={() => setShowOption(true)}
-            >
-              About Us
-            </a>
-          </Link>
-        </div>
-        <div className="flex flex-row mb-3 items-center">
-          <TiContacts />
-          <Link href={"/contact"}>
-            <a
-              className="mr-5 hover:text-gray-900"
-              onClick={() => setShowOption(true)}
-            >
-              Contact Us
-            </a>
-          </Link>
-        </div>
-        <div className="flex flex-row mb-3 items-center">
-          {!isAuthenticated ? (
-            <>
-              {/* <Link href={"/signup"}>
-                <button
-                  className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-blue-700 rounded text-white mt-4 md:mt-0 mx-2"
-                  onClick={() => {
-                    setShowOption(true);
-                  }}
+        <div className="flex flex-col gap-2">
+          {navLinks
+            .filter((l) => (l.authOnly ? isAuthenticated : true))
+            .map((l) => (
+              <Link key={l.href} href={l.href}>
+                <a
+                  className={`py-2 ${
+                    isActive(l.href) ? "text-gray-900" : "text-gray-600"
+                  }`}
+                  onClick={() => setIsMobileOpen(false)}
                 >
-                  Sign Up
-                </button>
-              </Link> */}
-              <Link href={"/login"}>
-                <button
-                  className="inline-flex items-center bg-blue-500 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-white mt-4 md:mt-0 mx-2"
-                  onClick={() => {
-                    setShowOption(true);
-                  }}
-                >
-                  Login
-                </button>
+                  {l.label}
+                </a>
               </Link>
-            </>
+            ))}
+        </div>
+        <div className="mt-3">
+          {!isAuthenticated ? (
+            <Link href={"/login"}>
+              <button
+                className="w-full inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white text-sm font-medium shadow-sm transition-colors hover:bg-blue-700 focus:outline-none"
+                onClick={() => setIsMobileOpen(false)}
+              >
+                Login
+              </button>
+            </Link>
           ) : (
             <div className="flex flex-col w-full gap-3">
-              <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                 {profile?.avatar_url ? (
                   <img
                     src={profile.avatar_url}
@@ -246,8 +152,9 @@ const Navbar = () => {
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium">
-                    {profile?.first_name?.[0]?.toUpperCase() || profile?.email?.[0]?.toUpperCase() || "U"}
+                  <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-medium">
+                    {profile?.first_name?.[0]?.toUpperCase() ||
+                      profile?.email?.[0]?.toUpperCase() || "U"}
                   </div>
                 )}
                 <div className="flex-1">
@@ -267,7 +174,7 @@ const Navbar = () => {
                 </div>
               </div>
               <button
-                className="inline-flex items-center justify-center bg-blue-500 border-0 py-2 px-4 focus:outline-none hover:bg-gray-700 rounded text-white w-full"
+                className="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-white text-sm font-medium shadow-sm transition-colors hover:bg-gray-700 focus:outline-none"
                 onClick={handleSignOutClick}
               >
                 Logout
