@@ -14,24 +14,28 @@ const CASHFREE_ENVIRONMENTS = {
   },
 };
 
+function getEffectiveEnv() {
+  const raw = (process.env.CASHFREE_ENV || process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
+  return raw === "LIVE" ? "LIVE" : "TEST";
+}
+
 export function getCashfreeConfig() {
-  // Read environment - defaults to TEST if not explicitly set to LIVE
-  const envVar = process.env.NEXT_PUBLIC_CASHFREE_ENV || "";
-  const env = envVar.toUpperCase() === "LIVE" ? "LIVE" : "TEST";
-  
-  // Read credentials - use env-specific variables if available, fallback to generic
-  const appId = (
-    process.env.CASHFREE_APP_ID ||
-    ""
-  ).trim();
-  
-  const secretKey = (
-    process.env.CASHFREE_SECRET_KEY ||
-    ""
-  ).trim();
-  
+  const env = getEffectiveEnv();
   const config = CASHFREE_ENVIRONMENTS[env];
-  
+
+  // Prefer env-specific credentials; fallback to generic names if provided
+  const appId = (
+    env === "LIVE"
+      ? (process.env.CASHFREE_LIVE_APP_ID || process.env.CASHFREE_APP_ID)
+      : (process.env.CASHFREE_TEST_APP_ID || process.env.CASHFREE_APP_ID)
+  || "").trim();
+
+  const secretKey = (
+    env === "LIVE"
+      ? (process.env.CASHFREE_LIVE_SECRET_KEY || process.env.CASHFREE_SECRET_KEY)
+      : (process.env.CASHFREE_TEST_SECRET_KEY || process.env.CASHFREE_SECRET_KEY)
+  || "").trim();
+
   return {
     env,
     appId,

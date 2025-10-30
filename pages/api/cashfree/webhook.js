@@ -78,7 +78,7 @@ export default async function handler(req, res) {
       const rawType = event?.type;
       const type = normalizeType(rawType);
       const orderId = extractOrderId(payload);
-      const paymentMode = (process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
+      const paymentMode = (process.env.CASHFREE_ENV || process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
 
       if (type === "PAYMENT_SUCCESS_WEBHOOK" || type === "PAYMENT_SUCCESS" || type === "ORDER_PAID") {
         if (!orderId) {
