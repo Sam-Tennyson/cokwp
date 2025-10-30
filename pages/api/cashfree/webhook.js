@@ -78,6 +78,7 @@ export default async function handler(req, res) {
       const rawType = event?.type;
       const type = normalizeType(rawType);
       const orderId = extractOrderId(payload);
+      const paymentMode = (process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
 
       if (type === "PAYMENT_SUCCESS_WEBHOOK" || type === "PAYMENT_SUCCESS" || type === "ORDER_PAID") {
         if (!orderId) {
@@ -86,7 +87,7 @@ export default async function handler(req, res) {
           console.log("[Webhook] Marking purchase success", { type, orderId });
           const { error: updateErr } = await supabase
             .from("purchases")
-            .update({ payment_status: "success", updated_at: new Date().toISOString() })
+            .update({ payment_status: "success", payment_mode: paymentMode, updated_at: new Date().toISOString() })
             .eq("transaction_id", orderId);
           if (updateErr) console.error("[Webhook] Failed to mark purchase success:", updateErr);
         }
@@ -97,7 +98,7 @@ export default async function handler(req, res) {
           console.log("[Webhook] Marking purchase failed", { type, orderId });
           const { error: updateErr } = await supabase
             .from("purchases")
-            .update({ payment_status: "failed", updated_at: new Date().toISOString() })
+            .update({ payment_status: "failed", payment_mode: paymentMode, updated_at: new Date().toISOString() })
             .eq("transaction_id", orderId);
           if (updateErr) console.error("[Webhook] Failed to mark purchase failed:", updateErr);
         }

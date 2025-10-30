@@ -164,6 +164,8 @@ export default async function handler(req, res) {
     console.log("[Cashfree][create-order] Order ID:", cashfreeData.order_id);
     console.log("[Cashfree][create-order] Payment Session ID:", cashfreeData.payment_session_id);
 
+
+    const paymentMode = (process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
     // Create purchase record in Supabase with status 'pending'
     const { data: purchase, error: purchaseError } = await supabase
       .from("purchases")
@@ -174,6 +176,7 @@ export default async function handler(req, res) {
         transaction_id: orderId,
         amount: Number(course.price),
         created_at: new Date().toISOString(),
+        payment_mode: paymentMode,
       })
       .select()
       .single();

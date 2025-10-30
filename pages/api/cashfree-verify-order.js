@@ -61,9 +61,10 @@ export default async function handler(req, res) {
 
     let updatedPurchase = null;
     if (paymentStatus !== "pending") {
+      const paymentMode = (process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
       const { data, error } = await supabase
         .from("purchases")
-        .update({ payment_status: paymentStatus, updated_at: new Date().toISOString() })
+        .update({ payment_status: paymentStatus, payment_mode: paymentMode, updated_at: new Date().toISOString() })
         .eq("transaction_id", String(orderId))
         .select()
         .maybeSingle();
