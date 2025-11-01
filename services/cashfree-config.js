@@ -15,7 +15,7 @@ const CASHFREE_ENVIRONMENTS = {
 };
 
 function getEffectiveEnv() {
-  const raw = (process.env.CASHFREE_ENV || process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
+  const raw = (process.env.NEXT_PUBLIC_CASHFREE_ENV || "TEST").toUpperCase();
   return raw === "LIVE" ? "LIVE" : "TEST";
 }
 
@@ -26,14 +26,14 @@ export function getCashfreeConfig() {
   // Prefer env-specific credentials; fallback to generic names if provided
   const appId = (
     env === "LIVE"
-      ? (process.env.CASHFREE_LIVE_APP_ID || process.env.CASHFREE_APP_ID)
-      : (process.env.CASHFREE_TEST_APP_ID || process.env.CASHFREE_APP_ID)
+      ? (process.env.CASHFREE_LIVE_APP_ID)
+      : (process.env.CASHFREE_TEST_APP_ID)
   || "").trim();
 
   const secretKey = (
     env === "LIVE"
-      ? (process.env.CASHFREE_LIVE_SECRET_KEY || process.env.CASHFREE_SECRET_KEY)
-      : (process.env.CASHFREE_TEST_SECRET_KEY || process.env.CASHFREE_SECRET_KEY)
+      ? (process.env.CASHFREE_LIVE_SECRET_KEY)
+      : (process.env.CASHFREE_TEST_SECRET_KEY)
   || "").trim();
 
   return {
