@@ -50,8 +50,9 @@ const Login = () => {
             <h2 className="text-gray-900 text-2xl mb-1 text-center font-medium title-font">
               Login
             </h2>
-            <p className="leading-relaxed text-xl mb-5 text-center text-gray-600">
-              Get access of free material
+            <p className="leading-relaxed text-sm mb-5 text-left text-gray-600">
+              Access is restricted. There is no self-service signup. If you need an
+              account, please contact the administrator.
             </p>
             <form onSubmit={handleSubmit}>
               <div className="relative mb-4">
@@ -112,9 +113,12 @@ const Login = () => {
                   )}
                 </button>
               </div>
-              <button disabled={isLoading} type="submit" className={`text-white ${isLoading ? "bg-gray-500" : "bg-indigo-500"} border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg`}>
+              <button disabled={isLoading} type="submit" className={`text-white ${isLoading ? "bg-gray-500" : "bg-indigo-500"} border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg w-full`}>
                 {isLoading ? "Loading..." : "Login"}
               </button>
+              <p className="mt-4 text-sm text-gray-500 text-center">
+                Don&apos;t have an account? Please contact the administrator to request access.
+              </p>
             </form>
           </div>
         </div>
